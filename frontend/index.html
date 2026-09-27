@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RailYatri AI • Indian Railways Dynamic ETA Passenger App</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="passenger-body">
+
+  <!-- Dual Portal Top Switcher Bar -->
+  <div class="portal-nav-bar">
+    <div class="portal-nav-container">
+      <div class="portal-tabs">
+        <a href="/" class="portal-tab active">
+          <span class="portal-tab-icon">🚆</span>
+          <span>Passenger Mobile App</span>
+          <span class="tab-pill">Active</span>
+        </a>
+        <a href="/control-room" class="portal-tab">
+          <span class="portal-tab-icon">🎛️</span>
+          <span>Control Room Dashboard</span>
+          <span class="tab-pill staff-pill">Rail Staff</span>
+        </a>
+      </div>
+
+      <div class="portal-nav-right">
+        <!-- 3D Dark / Light Mode Toggle Switch (from UI Design Ideas) -->
+        <div class="theme-toggle-wrap" title="Toggle Dark / Light Mode">
+          <button id="theme-toggle-btn" class="theme-switch" aria-label="Toggle Dark and Light Mode">
+            <span class="icon-sun">☀️</span>
+            <span class="theme-thumb"></span>
+            <span class="icon-moon">🌙</span>
+          </button>
+        </div>
+
+        <div class="ntes-live-badge">
+          <span class="live-ping"></span>
+          <span id="txt-ntes-status">NTES Live Active</span>
+        </div>
+
+        <!-- Cabin Sound FX & Audio Chime Toggle -->
+        <button class="audio-toggle-btn btn-audio-pill" title="Toggle Station Chimes & Cabin Audio">
+          <span>🔊</span>
+          <span>Audio ON</span>
+        </button>
+
+        <div class="lang-selector-wrapper">
+          <span class="lang-icon">🌐</span>
+          <select id="lang-selector" class="lang-select" aria-label="Select Language">
+            <option value="en">English (EN)</option>
+            <option value="hi">हिंदी (HI)</option>
+            <option value="ta">தமிழ் (TA)</option>
+            <option value="te">తెలుగు (TE)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="passenger-header">
+    <div class="header-inner">
+      <div class="brand-box">
+        <div class="vande-logo">
+          <img src="/static/assets/ir_emblem.svg" class="ir-logo-img" alt="Indian Railways Official Crest" />
+        </div>
+        <div>
+          <h1 id="txt-title" class="passenger-title">Indian Railways Dynamic AI ETA</h1>
+          <p id="txt-subtitle" class="passenger-subtitle">Accurate Real-Time Train Forecast • Platform Allocations • Smart Connection Rescue</p>
+        </div>
+      </div>
+      <div class="header-right-meta">
+        <div class="accuracy-badge">
+          <span class="acc-val">98.6%</span>
+          <span class="acc-lbl">ML Precision (±15m)</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Passenger App Content -->
+  <main class="passenger-main">
+
+    <!-- Search Section -->
+    <section class="passenger-search-card">
+      <div class="search-box-wrap">
+        <span class="search-icon">🔍</span>
+        <input 
+          type="text" 
+          id="train-search-input" 
+          class="passenger-search-input" 
+          placeholder="Search by Train No, Name or Station (e.g. 12673, Cheran, Kovai, Mandovi)..."
+          autocomplete="off"
+        >
+        <button id="search-btn" class="btn btn-vande">
+          <span id="txt-search-btn">Track Train</span>
+        </button>
+      </div>
+      <div id="search-suggestions" class="search-suggestions hidden"></div>
+
+      <!-- Quick Preset Train Chips -->
+      <div class="quick-trains-bar">
+        <span class="quick-title">Popular Trains:</span>
+        <button class="chip chip-active" data-train="12673">12673 • Cheran Express (MAS ➔ CBE)</button>
+        <button class="chip" data-train="12681">12681 • Kovai Superfast (MAS ➔ CBE)</button>
+        <button class="chip" data-train="10103">10103 • Mandovi Express (CSMT ➔ MAO)</button>
+        <button class="chip" data-train="10111">10111 • Konkan Kanya (CSMT ➔ MAO)</button>
+        <button class="chip" data-train="20643">20643 • Vande Bharat Express (MAS ➔ CBE)</button>
+      </div>
+
+      <!-- Flagship Corridors Carousel (inspired by Home page 1 & 2) -->
+      <div class="flagship-corridors-section">
+        <div class="fc-header">
+          <span class="fc-title">⚡ Flagship Express Corridors</span>
+          <span class="fc-sub font-mono">Live Telemetry Feeds Available</span>
+        </div>
+        <div class="fc-grid">
+          <!-- Card 1: Vande Bharat Express -->
+          <div class="fc-card fc-vande" data-train="20643">
+            <div class="fc-card-top">
+              <span class="fc-pill-badge">Tier 1 Semi-High Speed</span>
+              <span class="fc-badge-live">● LIVE</span>
+            </div>
+            <div class="fc-card-body">
+              <div class="fc-info">
+                <h4 class="fc-train-title">Vande Bharat Exp</h4>
+                <p class="fc-route-desc">MAS ➔ CBE (4h 20m)</p>
+                <div class="fc-stat font-mono">⚡ 130 km/h MPS • 99.2% OT</div>
+              </div>
+              <div class="fc-train-art">
+                <img src="/static/assets/vande_bharat.svg" class="fc-train-img" alt="Vande Bharat Train 18 Aerodynamic Trainset" />
+              </div>
+            </div>
+            <button class="fc-track-btn" data-train="20643">Track Live ➔</button>
+          </div>
+
+          <!-- Card 2: Cheran Superfast Express -->
+          <div class="fc-card fc-cheran active-fc-card" data-train="12673">
+            <div class="fc-card-top">
+              <span class="fc-pill-badge">Night Superfast • Priority Tier 1</span>
+              <span class="fc-badge-live fc-badge-orange">● TRACKING</span>
+            </div>
+            <div class="fc-card-body">
+              <div class="fc-info">
+                <h4 class="fc-train-title">Cheran Superfast</h4>
+                <p class="fc-route-desc">MAS ➔ CBE (7h 50m)</p>
+                <div class="fc-stat font-mono">🔋 WAP-7 Loco • Buffer Recovery</div>
+              </div>
+              <div class="fc-train-art">
+                <img src="/static/assets/wap7_locomotive.svg" class="fc-train-img" alt="WAP-7 High Speed Electric Locomotive" />
+              </div>
+            </div>
+            <button class="fc-track-btn" data-train="12673">Track Live ➔</button>
+          </div>
+
+          <!-- Card 3: Mandovi Express -->
+          <div class="fc-card fc-mandovi" data-train="10103">
+            <div class="fc-card-top">
+              <span class="fc-pill-badge">Scenic Konkan Railway</span>
+              <span class="fc-badge-live fc-badge-green">● MONITORED</span>
+            </div>
+            <div class="fc-card-body">
+              <div class="fc-info">
+                <h4 class="fc-train-title">Mandovi Express</h4>
+                <p class="fc-route-desc">CSMT ➔ MAO (11h 45m)</p>
+                <div class="fc-stat font-mono">🌊 750km Coast • Ghat Dynamics</div>
+              </div>
+              <div class="fc-train-art">
+                <img src="/static/assets/wag9_freight.svg" class="fc-train-img" alt="WAG-9 Heavy Haul Electric Locomotive" />
+              </div>
+            </div>
+            <button class="fc-track-btn" data-train="10103">Track Live ➔</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Horizontal Date Selector (inspired by UI Design Ideas Home page 2) -->
+    <div class="date-strip-container">
+      <div class="date-strip-label">Journey Date:</div>
+      <div class="date-strip" id="date-strip">
+        <div class="date-pill"><span class="d-day">Sun</span><span class="d-num">14</span></div>
+        <div class="date-pill"><span class="d-day">Mon</span><span class="d-num">15</span></div>
+        <div class="date-pill"><span class="d-day">Tue</span><span class="d-num">16</span></div>
+        <div class="date-pill active"><span class="d-day">Today</span><span class="d-num">17</span></div>
+        <div class="date-pill"><span class="d-day">Thu</span><span class="d-num">18</span></div>
+        <div class="date-pill"><span class="d-day">Fri</span><span class="d-num">19</span></div>
+        <div class="date-pill"><span class="d-day">Sat</span><span class="d-num">20</span></div>
+      </div>
+    </div>
+
+    <!-- DIGITAL BOARDING PASS & LIVE TRACKING CARD (inspired by UI Design Ideas Home page 1 & 2) -->
+    <section id="train-summary-card" class="boarding-pass-card hidden">
+      
+      <!-- Top Ticket Header (Vibrant Flight/Train Pass Style) -->
+      <div class="bp-top-ticket">
+        <div class="bp-top-grid">
+          <div class="bp-station-block">
+            <span class="bp-sub-label">DEPARTURE</span>
+            <span class="bp-code" id="bp-origin-code">MAS</span>
+            <span class="bp-city" id="bp-origin-city">Chennai Central</span>
+            <span class="bp-time" id="bp-origin-time">Dep 22:00</span>
+          </div>
+
+          <div class="bp-route-visual">
+            <div class="bp-route-meta">
+              <span id="bp-total-dist">500 KM</span>
+              <span class="bp-dot-sep">•</span>
+              <span id="bp-total-duration">7h 50m</span>
+            </div>
+            <!-- Wavy / dynamic route trajectory with train icon -->
+            <div class="bp-track-line-wrapper">
+              <svg class="bp-track-svg" viewBox="0 0 300 44" preserveAspectRatio="none">
+                <path d="M 10 24 Q 75 6, 150 24 T 290 24" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="5,4" class="svg-track-path"/>
+                <circle cx="10" cy="24" r="5" fill="#f97316" stroke="#fff" stroke-width="2"/>
+                <circle cx="290" cy="24" r="5" fill="#10b981" stroke="#fff" stroke-width="2"/>
+              </svg>
+              <div id="bp-train-loco-marker" class="bp-loco-marker" style="left: 35%;">
+                <span class="loco-emoji">🚆</span>
+              </div>
+            </div>
+            <div class="bp-train-center-badge">
+              <span id="badge-train-no" class="font-mono">12673</span> • <span id="disp-train-name-short">Cheran SF</span>
+            </div>
+          </div>
+
+          <div class="bp-station-block text-right">
+            <span class="bp-sub-label">ARRIVAL</span>
+            <span class="bp-code text-accent" id="bp-dest-code">CBE</span>
+            <span class="bp-city" id="bp-dest-city">Coimbatore Jn</span>
+            <span class="bp-time text-accent font-bold" id="bp-dest-time">Dynamic ETA 06:25</span>
+          </div>
+        </div>
+
+        <!-- Boarding Pass Mid-Section (Train details, Platform, Telemetry) -->
+        <div class="bp-details-banner">
+          <div class="bp-train-info">
+            <div>
+              <h2 id="disp-train-name" class="bp-train-title">Cheran Superfast Express</h2>
+              <span id="badge-train-type" class="bp-train-sub">Superfast Express • Priority Tier 1</span>
+            </div>
+          </div>
+
+          <div class="bp-metrics-cluster">
+            <div class="bp-metric-box">
+              <span class="bpm-label">Estimated Platform</span>
+              <span id="disp-live-platform-top" class="bpm-val text-success">PF-2</span>
+            </div>
+            <div class="bp-metric-box">
+              <span class="bpm-label" id="txt-current-delay-label">Current Delay</span>
+              <span id="disp-current-delay" class="bpm-val text-warning">25 min Late</span>
+            </div>
+            <div class="bp-metric-box">
+              <span class="bpm-label">Live GPS Speed</span>
+              <span id="disp-live-speed" class="bpm-val text-primary">105 km/h</span>
+            </div>
+            <div class="bp-metric-box">
+              <span class="bpm-label">Signal Ahead</span>
+              <span id="disp-live-signal" class="bpm-val text-success">GREEN (MPS)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROLLING STOCK & LOCOMOTIVE VISUALIZER (Vector / 3D Showcase) -->
+        <div class="rolling-stock-showcase">
+          <div class="rss-header">
+            <div class="rss-title-cluster">
+              <span class="rss-tag font-mono">⚡ TRACTION &amp; ROLLING STOCK</span>
+              <h3 id="disp-loco-title" class="rss-loco-name">WAP-7 High Speed Electric Locomotive</h3>
+            </div>
+            <div class="rss-badge-cluster">
+              <span id="disp-loco-badge" class="badge badge-success font-mono">3-Phase AC Traction</span>
+              <button id="btn-toggle-loco-view" class="rss-view-switch-btn font-mono" title="Toggle Perspective / 3D Angle View">
+                <span>🔄 3D Angle</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="rss-stage">
+            <div class="rss-backdrop-glow"></div>
+            <div class="rss-train-art-container" id="rss-train-container">
+              <img id="rss-train-img" src="/static/assets/wap7_locomotive.svg" class="rss-train-img-main" alt="Indian Railways Rolling Stock" />
+            </div>
+            <div class="rss-overlay-specs font-mono">
+              <div class="rss-spec-item">
+                <span class="rss-lbl">HORSEPOWER</span>
+                <span id="disp-spec-hp" class="rss-val">6,350 HP</span>
+              </div>
+              <div class="rss-spec-item">
+                <span class="rss-lbl">RATED MPS</span>
+                <span id="disp-spec-mps" class="rss-val">140 km/h</span>
+              </div>
+              <div class="rss-spec-item">
+                <span class="rss-lbl">BRAKE SYSTEM</span>
+                <span id="disp-spec-brakes" class="rss-val">Dual-Pipe Air + Regen</span>
+              </div>
+              <div class="rss-spec-item">
+                <span class="rss-lbl">TRACK GAUGE</span>
+                <span class="rss-val">1,676 mm Broad</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ticket Cutouts / Semicircle Perforation (from Home page 1) -->
+      <div class="ticket-perforations">
+        <span class="ticket-notch notch-left"></span>
+        <div class="ticket-dash-line"></div>
+        <span class="ticket-notch notch-right"></span>
+      </div>
+
+      <!-- Lower Ticket Stub (Boarding Pass Bottom Halve with Barcode) -->
+      <div class="bp-bottom-ticket">
+        <div class="stub-meta-grid">
+          <div class="stub-col">
+            <span class="stub-lbl">CLASS</span>
+            <span class="stub-val">Executive AC Chair (EC)</span>
+          </div>
+          <div class="stub-col">
+            <span class="stub-lbl">COACH &amp; SEAT</span>
+            <span class="stub-val font-mono">B2 • 45 (Window)</span>
+          </div>
+          <div class="stub-col">
+            <span class="stub-lbl">CURRENT RUNNING BEACON</span>
+            <span class="stub-val font-bold text-accent" id="disp-curr-stn-name">Katpadi Jn</span>
+          </div>
+          <div class="stub-col">
+            <span class="stub-lbl">DISTANCE PROGRESS</span>
+            <span class="stub-val font-mono"><strong id="disp-distance-covered">130 km</strong> passed / <strong id="disp-distance-remaining">370 km</strong> to go</span>
+          </div>
+        </div>
+
+        <!-- Proximity Gradient Bar (Green -> Yellow -> Red) -->
+        <div class="proximity-gradient-container">
+          <div class="pg-header">
+            <span class="pg-title">Dynamic Proximity Gradient:</span>
+            <span class="pg-status" id="disp-proximity-desc">Mid Section (Yellow Zone)</span>
+          </div>
+          <div class="pg-bar-track">
+            <div class="pg-gradient-fill"></div>
+            <div class="pg-needle" id="pg-needle" style="left: 35%;">
+              <span class="needle-pip"></span>
+              <span class="needle-tip">🚆</span>
+            </div>
+          </div>
+          <div class="pg-labels font-mono">
+            <span class="text-success">🟢 &lt;50km (Imminent)</span>
+            <span class="text-warning">🟡 50-150km (Midway)</span>
+            <span class="text-danger">🔴 &gt;150km (Far)</span>
+          </div>
+        </div>
+
+        <!-- Barcode & Virtual Map Trigger Row -->
+        <div class="barcode-action-row">
+          <div class="barcode-graphic-box">
+            <!-- Authentic SVG Barcode Pattern -->
+            <svg class="barcode-svg" viewBox="0 0 240 50" preserveAspectRatio="none">
+              <!-- Barcode bars -->
+              <rect x="0" y="0" width="3" height="42" fill="currentColor"/>
+              <rect x="5" y="0" width="2" height="42" fill="currentColor"/>
+              <rect x="10" y="0" width="4" height="42" fill="currentColor"/>
+              <rect x="17" y="0" width="1" height="42" fill="currentColor"/>
+              <rect x="21" y="0" width="3" height="42" fill="currentColor"/>
+              <rect x="27" y="0" width="5" height="42" fill="currentColor"/>
+              <rect x="35" y="0" width="2" height="42" fill="currentColor"/>
+              <rect x="40" y="0" width="4" height="42" fill="currentColor"/>
+              <rect x="47" y="0" width="1" height="42" fill="currentColor"/>
+              <rect x="51" y="0" width="3" height="42" fill="currentColor"/>
+              <rect x="57" y="0" width="2" height="42" fill="currentColor"/>
+              <rect x="62" y="0" width="5" height="42" fill="currentColor"/>
+              <rect x="70" y="0" width="1" height="42" fill="currentColor"/>
+              <rect x="74" y="0" width="4" height="42" fill="currentColor"/>
+              <rect x="81" y="0" width="2" height="42" fill="currentColor"/>
+              <rect x="86" y="0" width="3" height="42" fill="currentColor"/>
+              <rect x="92" y="0" width="6" height="42" fill="currentColor"/>
+              <rect x="101" y="0" width="2" height="42" fill="currentColor"/>
+              <rect x="106" y="0" width="4" height="42" fill="currentColor"/>
+              <rect x="113" y="0" width="1" height="42" fill="currentColor"/>
+              <rect x="117" y="0" width="5" height="42" fill="currentColor"/>
+              <rect x="125" y="0" width="2" height="42" fill="currentColor"/>
+              <rect x="130" y="0" width="3" height="42" fill="currentColor"/>
+              <rect x="136" y="0" width="5" height="42" fill="currentColor"/>
+              <rect x="144" y="0" width="1" height="42" fill="currentColor"/>
+              <rect x="148" y="0" width="4" height="42" fill="currentColor"/>
+              <rect x="155" y="0" width="2" height="42" fill="currentColor"/>
+              <rect x="160" y="0" width="5" height="42" fill="currentColor"/>
+              <rect x="168" y="0" width="2" height="42" fill="currentColor"/>
+              <rect x="173" y="0" width="4" height="42" fill="currentColor"/>
+              <rect x="180" y="0" width="1" height="42" fill="currentColor"/>
+              <rect x="184" y="0" width="5" height="42" fill="currentColor"/>
+              <rect x="192" y="0" width="2" height="42" fill="currentColor"/>
+              <rect x="197" y="0" width="3" height="42" fill="currentColor"/>
+              <rect x="203" y="0" width="5" height="42" fill="currentColor"/>
+              <rect x="211" y="0" width="2" height="42" fill="currentColor"/>
+              <rect x="216" y="0" width="4" height="42" fill="currentColor"/>
+              <rect x="223" y="0" width="1" height="42" fill="currentColor"/>
+              <rect x="227" y="0" width="4" height="42" fill="currentColor"/>
+              <rect x="234" y="0" width="3" height="42" fill="currentColor"/>
+            </svg>
+            <span class="barcode-num font-mono">PNR: 428-9104829 • NTES-IR-AI-ETA</span>
+          </div>
+
+          <button id="btn-toggle-map" class="btn btn-virtual-map">
+            <span>🗺️ View Virtual Train Track Map</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Collapsible Virtual Railway Track Map GIS & Schematic Drawer -->
+      <div id="virtual-map-drawer" class="virtual-map-drawer hidden">
+        <div class="vmap-header">
+          <div>
+            <span class="vmap-title">Interactive Corridor Track & Train GIS Location</span>
+            <span class="vmap-sub font-mono" id="vmap-sub-coords">Live Telemetry • GPS Active</span>
+          </div>
+          <div class="vmap-controls">
+            <div class="map-view-switcher">
+              <button id="p-btn-mode-gis" class="btn btn-cr-mode active">🗺️ GIS Map</button>
+              <button id="p-btn-mode-schematic" class="btn btn-cr-mode">📐 Schematic</button>
+            </div>
+            <button id="p-btn-recenter" class="btn recenter-btn" title="Snap View to Live Locomotive">🎯 Re-center</button>
+          </div>
+        </div>
+        <div id="passenger-gis-map" class="passenger-gis-map"></div>
+        <canvas id="passenger-track-canvas" class="passenger-track-canvas" width="900" height="150" style="display: none;"></canvas>
+      </div>
+
+      <!-- "What-If" Simulation Drawer -->
+      <div class="simulation-drawer">
+        <div class="sim-header">
+          <span class="sim-title">⚡ Interactive "What-If" Scenario Simulator</span>
+          <span class="sim-note">Recalculate dynamic arrival times based on real-time track conditions</span>
+        </div>
+
+        <div class="sim-controls-grid sim-controls-grid-rich">
+          <!-- Parameter 1: Current Station -->
+          <div class="sim-input-group">
+            <label id="txt-sim-station-label" for="sim-station-select">📍 Simulate Current Location:</label>
+            <select id="sim-station-select" class="form-select"></select>
+          </div>
+
+          <!-- Parameter 2: Delay -->
+          <div class="sim-input-group">
+            <label id="txt-sim-delay-label" for="sim-delay-input">⏱️ Live Delay (min):</label>
+            <input type="number" id="sim-delay-input" class="form-input" value="25" min="-20" max="300" step="5">
+          </div>
+
+          <!-- Parameter 3: Weather -->
+          <div class="sim-input-group">
+            <label id="txt-weather-label" for="sim-weather-select">🌦️ Weather Condition:</label>
+            <select id="sim-weather-select" class="form-select">
+              <option value="Clear">☀️ Clear (Normal MPS 110 km/h)</option>
+              <option value="Heavy Rain">🌧️ Heavy Monsoon Rain (-10 km/h)</option>
+              <option value="Dense Fog">🌫️ Dense Fog / FogPass (-30 km/h)</option>
+            </select>
+          </div>
+
+          <!-- Parameter 4: Congestion -->
+          <div class="sim-input-group">
+            <label id="txt-congestion-label" for="sim-congestion-select">🚦 Track Headway:</label>
+            <select id="sim-congestion-select" class="form-select">
+              <option value="Normal">🟢 Normal Headway</option>
+              <option value="High">🔴 High Bottleneck (Suburban Junction Hold)</option>
+              <option value="Low">⚡ Clear High-Speed Corridor</option>
+            </select>
+          </div>
+
+          <!-- Parameter 5: Day of the Week -->
+          <div class="sim-input-group">
+            <label for="sim-day-select">📅 Day of the Week:</label>
+            <select id="sim-day-select" class="form-select">
+              <option value="Mid-Week">Regular Mid-Week (Standard Traffic)</option>
+              <option value="Monday Rush">💼 Monday Morning Commuter Rush (+4m)</option>
+              <option value="Friday Evening">🎒 Friday Evening Weekend Rush (+6m)</option>
+              <option value="Sunday Holiday">🏖️ Sunday Return Surge (+2m)</option>
+            </select>
+          </div>
+
+          <!-- Parameter 6: Occasion / Special Public Event -->
+          <div class="sim-input-group">
+            <label for="sim-occasion-select">🎪 Occasion / Public Event:</label>
+            <select id="sim-occasion-select" class="form-select">
+              <option value="None">None (Standard Operating Day)</option>
+              <option value="Festival Rush (Diwali/Chhath/Pongal)">🪔 Major Festival (Diwali/Chhath/Pongal) (+14m Dwell)</option>
+              <option value="Pilgrimage (Kumbh/Sabarimala/Puri)">🕉️ Pilgrimage (Kumbh / Sabarimala / Puri) (+18m Hold)</option>
+              <option value="Mega Concert / Stadium Match / Expo">🏟️ Mega Concert / Stadium Match (+10m Exit Crowd)</option>
+              <option value="State / District Election Results">🗳️ Election Counting Day (+12m VIP Precedence)</option>
+            </select>
+          </div>
+
+          <!-- Parameter 7: Civil & Social Disruption -->
+          <div class="sim-input-group">
+            <label for="sim-civil-select">📢 Civil & Public Disruption:</label>
+            <select id="sim-civil-select" class="form-select">
+              <option value="None">None (Nominal Peace & Order)</option>
+              <option value="Rail Roko / Track Blockade Protest">⚠️ Rail Roko / Track Blockade Protest (+45m Hold)</option>
+              <option value="Trade Union / Loco Pilot Strike">🛑 Trade Union / Loco Pilot Strike (+25m Caution Order)</option>
+              <option value="Severe Overcrowding / Boarding Hold">👥 Severe Overcrowding / Boarding Hold (+15m Dwell)</option>
+            </select>
+          </div>
+
+          <!-- Parameter 8: Technical Malfunctions -->
+          <div class="sim-input-group">
+            <label for="sim-tech-select">🔧 Technical & Track Defect:</label>
+            <select id="sim-tech-select" class="form-select">
+              <option value="None">None (All Systems Nominal)</option>
+              <option value="OHE Power Tripping / Wire Break">⚡ OHE Power Tripping / Wire Break (+35m Neutral Zone)</option>
+              <option value="Loco Traction / Pantograph / Brake Defect">⚙️ Loco Traction / Pantograph Defect (50 km/h, +20m)</option>
+              <option value="Track Circuit / Point Interlock Failure">🛤️ Point / Track Circuit Failure (15 km/h Walk, +30m)</option>
+            </select>
+          </div>
+
+          <!-- Parameter 9: Timetable & Precedence Conflict -->
+          <div class="sim-input-group">
+            <label for="sim-timetable-select">⏱️ Timetable & Priority Clash:</label>
+            <select id="sim-timetable-select" class="form-select">
+              <option value="None">None (Standard Schedule Adherence)</option>
+              <option value="VIP / Vande Bharat Rajdhani Overtake">👑 Loop Precedence Hold for Vande Bharat / Rajdhani (+18m)</option>
+              <option value="New Train Release / Timetable Conflict">🚆 New Train Release / Timetable Slot Conflict (+12m)</option>
+              <option value="Scheduled Track Mega Block (Single Line)">🚧 Scheduled Track Mega Block (+26m Single Line)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Dynamic AI Operational Advisory Banner -->
+        <div id="sim-advisory-banner" class="sim-advisory-banner hidden">
+          <div class="advisory-badge font-mono">
+            <span>⚠️</span>
+            <span>AI MULTI-FACTOR OPERATIONAL DISRUPTION ADVISORY</span>
+          </div>
+          <p class="advisory-content font-mono" id="disp-sim-advisory"></p>
+        </div>
+
+        <div class="sim-buttons-row">
+          <button id="btn-recalculate" class="btn btn-action">⚡ Recalculate Dynamic ETA</button>
+          <button id="btn-step-sim" class="btn btn-secondary">▶️ Advance Next Section</button>
+          <button id="btn-inject-delay" class="btn btn-warning">⚠️ Inject 20m Signal Halt</button>
+          <button id="btn-reset-sim" class="btn btn-outline">🔄 Reset Journey</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- INNOVATION SECTION 1: Automatic Alternate Journey Discovery (Rescue Cards) -->
+    <section id="alternate-journeys-card" class="innovation-card hidden">
+      <div class="card-header-bar alert-header">
+        <div class="header-icon-title">
+          <span class="icon-pulse">🔄</span>
+          <div>
+            <h3 class="card-heading">Automatic Alternate Journey Discovery (Connection Rescue)</h3>
+            <p id="disp-alternate-reason" class="card-subheading">Train delay detected. Smart alternative train connections found on this corridor.</p>
+          </div>
+        </div>
+        <span class="badge badge-rescue">Connection Rescue Active</span>
+      </div>
+
+      <div id="alternates-list" class="alternates-grid">
+        <!-- Dynamically populated alternative train cards -->
+      </div>
+    </section>
+
+    <!-- INNOVATION SECTION 2: 3-Month Train Behavioral Profile DNA -->
+    <section id="behavior-profile-card" class="innovation-card hidden">
+      <div class="card-header-bar">
+        <div class="header-icon-title">
+          <span class="icon-pulse">🧠</span>
+          <div>
+            <h3 class="card-heading">Train Behavioral Profile DNA (Quarterly Analysis)</h3>
+            <p id="disp-profile-quarter" class="card-subheading">Based on 2025 actual scraped running data across 90 days</p>
+          </div>
+        </div>
+        <div class="score-pill">
+          <span class="score-title">Punctuality Score:</span>
+          <span id="disp-punctuality-score" class="score-number">88 / 100</span>
+        </div>
+      </div>
+
+      <div class="profile-metrics-grid">
+        <div class="profile-metric-box">
+          <span class="pm-label">Right-Time Arrivals</span>
+          <span id="disp-pct-right-time" class="pm-val text-success">78.5%</span>
+        </div>
+        <div class="profile-metric-box">
+          <span class="pm-label">Slight Delay (<30m)</span>
+          <span id="disp-pct-slight-delay" class="pm-val text-warning">18.0%</span>
+        </div>
+        <div class="profile-metric-box">
+          <span class="pm-label">Significant Delay (>30m)</span>
+          <span id="disp-pct-sig-delay" class="pm-val text-danger">3.5%</span>
+        </div>
+        <div class="profile-metric-box">
+          <span class="pm-label">Recovery Pattern</span>
+          <span id="disp-recovery-pattern" class="pm-val text-primary">High (8-15m / 100km)</span>
+        </div>
+      </div>
+
+      <div class="profile-narrative">
+        <div class="profile-verdict-box">
+          <span class="verdict-icon">💡</span>
+          <p id="disp-profile-verdict" class="verdict-text">High-priority Superfast rake. Highly reliable on trunk lines; recovers delay during night runs.</p>
+        </div>
+        <div class="bottlenecks-box">
+          <strong class="bottlenecks-title">Known Bottleneck Hotspots:</strong>
+          <ul id="disp-bottlenecks-list" class="bottlenecks-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- DYNAMIC ETA FORECAST TABLE WITH DISTANCE GRADIENT -->
+    <section class="forecast-section">
+      <div class="section-header-row">
+        <div class="title-with-badge">
+          <h3 id="txt-table-title" class="section-title">Dynamic Downstream Station Forecasts</h3>
+          <span class="badge badge-accent">Adaptive ML Inference</span>
+        </div>
+        <div class="gradient-guide">
+          <span>Distance Gradient:</span>
+          <span class="guide-tag g-tag-green">🟢 &lt;50km (Imminent)</span>
+          <span class="guide-tag g-tag-yellow">🟡 50-150km (Mid Section)</span>
+          <span class="guide-tag g-tag-red">🔴 &gt;150km (Far Terminus)</span>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-responsive">
+          <table class="passenger-eta-table">
+            <thead>
+              <tr>
+                <th id="th-stn">Station</th>
+                <th id="th-platform" class="col-platform">Est. Platform</th>
+                <th id="th-dist-grad">Proximity Gradient</th>
+                <th id="th-sched">Scheduled</th>
+                <th id="th-static">Static / Linear</th>
+                <th id="th-ai" class="highlight-ai-col">Dynamic AI ETA</th>
+                <th id="th-delay">Delay</th>
+                <th id="th-trend">Trend</th>
+                <th id="th-rec">Buffer Recovery</th>
+              </tr>
+            </thead>
+            <tbody id="eta-table-body">
+              <tr>
+                <td colspan="9" class="empty-state-cell">
+                  <div class="empty-state">
+                    <p id="txt-empty-prompt">Please search and select a train above to view dynamic ETA forecasts.</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Floating Mobile App Bottom Navigation Dock (inspired by Home page 2) -->
+  <nav class="floating-mobile-dock" aria-label="Quick Navigation">
+    <button class="dock-btn active" id="dock-btn-track" title="Live Boarding Pass">
+      <span class="dock-icon">🚆</span>
+      <span class="dock-lbl">Ticket</span>
+    </button>
+    <button class="dock-btn" id="dock-btn-map" title="Virtual Track Map">
+      <span class="dock-icon">🗺️</span>
+      <span class="dock-lbl">Track Map</span>
+    </button>
+    <button class="dock-btn" id="dock-btn-sim" title="What-If Simulator">
+      <span class="dock-icon">⚡</span>
+      <span class="dock-lbl">Simulator</span>
+    </button>
+    <button class="dock-btn" id="dock-btn-dna" title="Behavioral DNA">
+      <span class="dock-icon">🧠</span>
+      <span class="dock-lbl">DNA Profile</span>
+    </button>
+    <a href="/control-room" class="dock-btn dock-staff-btn" title="Control Room Console">
+      <span class="dock-icon">🎛️</span>
+      <span class="dock-lbl">Staff Radar</span>
+    </a>
+  </nav>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="/static/audio_fx.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

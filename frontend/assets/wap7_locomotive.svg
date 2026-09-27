@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 160" width="100%" height="100%">
+  <defs>
+    <linearGradient id="wapBody" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="60%" stop-color="#f1f5f9"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+    <linearGradient id="wapRed" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#b91c1c"/>
+      <stop offset="50%" stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+    <linearGradient id="wapDark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <filter id="headlightGlow">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Heavy Co-Co High-Speed Cast Bogies & 6 Axles -->
+  <g fill="#1e293b" stroke="#475569" stroke-width="2">
+    <!-- Front Bogie -->
+    <rect x="35" y="116" width="125" height="12" rx="3" fill="#0f172a"/>
+    <circle cx="50" cy="132" r="14"/><circle cx="50" cy="132" r="6" fill="#cbd5e1"/>
+    <circle cx="95" cy="132" r="14"/><circle cx="95" cy="132" r="6" fill="#cbd5e1"/>
+    <circle cx="140" cy="132" r="14"/><circle cx="140" cy="132" r="6" fill="#cbd5e1"/>
+    <!-- Suspension springs -->
+    <rect x="70" y="120" width="8" height="6" fill="#94a3b8"/>
+    <rect x="115" y="120" width="8" height="6" fill="#94a3b8"/>
+
+    <!-- Rear Bogie -->
+    <rect x="240" y="116" width="125" height="12" rx="3" fill="#0f172a"/>
+    <circle cx="255" cy="132" r="14"/><circle cx="255" cy="132" r="6" fill="#cbd5e1"/>
+    <circle cx="300" cy="132" r="14"/><circle cx="300" cy="132" r="6" fill="#cbd5e1"/>
+    <circle cx="345" cy="132" r="14"/><circle cx="345" cy="132" r="6" fill="#cbd5e1"/>
+    <rect x="275" y="120" width="8" height="6" fill="#94a3b8"/>
+    <rect x="320" y="120" width="8" height="6" fill="#94a3b8"/>
+  </g>
+
+  <!-- Massive Heavy Steel Chassis Frame -->
+  <rect x="20" y="108" width="360" height="12" rx="2" fill="url(#wapDark)" stroke="#334155" stroke-width="1.5"/>
+
+  <!-- Cowcatcher / Cattle Guard (Front & Rear) -->
+  <polygon points="12,126 22,108 28,126" fill="#dc2626" stroke="#991b1b" stroke-width="1"/>
+  <polygon points="388,126 378,108 372,126" fill="#dc2626" stroke="#991b1b" stroke-width="1"/>
+
+  <!-- High-Tensile Center Buffer Coupler (CBC) -->
+  <rect x="6" y="112" width="12" height="6" rx="1" fill="#475569"/>
+  <rect x="382" y="112" width="12" height="6" rx="1" fill="#475569"/>
+
+  <!-- Main Aerodynamic Cab & Machine Room Body -->
+  <path d="M 22 108 
+           L 30 65 
+           Q 34 52 48 50 
+           L 352 50 
+           Q 366 52 370 65 
+           L 378 108 Z" fill="url(#wapBody)" stroke="#94a3b8" stroke-width="1.5"/>
+
+  <!-- Iconic Bold Red & Navy Blue IR Racing Band -->
+  <path d="M 27 82 L 373 82 L 375 96 L 25 96 Z" fill="url(#wapRed)"/>
+  <rect x="25" y="96" width="350" height="3" fill="#1e3a8a"/>
+
+  <!-- Twin Cab Windshields (Angled Safety Glass) -->
+  <!-- Cab 1 (Left) -->
+  <polygon points="34,68 44,55 75,55 72,68" fill="#0f172a" stroke="#38bdf8" stroke-width="1"/>
+  <!-- Cab 2 (Right) -->
+  <polygon points="328,55 356,55 366,68 328,68" fill="#0f172a" stroke="#38bdf8" stroke-width="1"/>
+
+  <!-- Machine Room Ventilation Grilles & Louvers -->
+  <g fill="#475569" stroke="#334155" stroke-width="0.5">
+    <rect x="100" y="58" width="40" height="18" rx="2"/>
+    <rect x="155" y="58" width="40" height="18" rx="2"/>
+    <rect x="210" y="58" width="40" height="18" rx="2"/>
+    <rect x="265" y="58" width="40" height="18" rx="2"/>
+  </g>
+
+  <!-- Dual High-Voltage 25kV AC Diamond/Single-Arm Pantographs -->
+  <!-- Pantograph 1 (Cab 1 End) -->
+  <path d="M 75 50 L 92 30 L 105 42 L 88 18 L 122 18" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Pantograph 2 (Cab 2 End) -->
+  <path d="M 325 50 L 308 30 L 295 42 L 312 18 L 278 18" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Roof Insulators -->
+  <circle cx="85" cy="50" r="3" fill="#ca8a04"/>
+  <circle cx="315" cy="50" r="3" fill="#ca8a04"/>
+  <line x1="90" y1="48" x2="310" y2="48" stroke="#ca8a04" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+  <!-- Twin Halogen Projector Headlights with Glow -->
+  <g filter="url(#headlightGlow)">
+    <circle cx="28" cy="74" r="4.5" fill="#fef08a"/>
+    <circle cx="28" cy="74" r="2.5" fill="#ffffff"/>
+    <circle cx="372" cy="74" r="4.5" fill="#ef4444"/>
+  </g>
+  <!-- Flasher Lights -->
+  <circle cx="32" cy="62" r="2" fill="#ef4444"/>
+  <circle cx="368" cy="62" r="2" fill="#ef4444"/>
+
+  <!-- Locomotive Shed & Number Markings -->
+  <rect x="160" y="85" width="80" height="18" rx="3" fill="#0f172a" stroke="#f59e0b" stroke-width="1"/>
+  <text x="200" y="94" font-family="'JetBrains Mono', monospace" font-weight="800" font-size="7" fill="#f8fafc" text-anchor="middle">WAP-7 #30452</text>
+  <text x="200" y="101" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="5" fill="#38bdf8" text-anchor="middle">RPM SHED • 6350 HP</text>
+</svg>

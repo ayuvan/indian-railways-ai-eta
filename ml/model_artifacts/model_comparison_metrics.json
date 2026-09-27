@@ -1,0 +1,34 @@
+[
+  {
+    "model_name": "Naive Delay Persistence (Standard NTES/IRCTC)",
+    "mae": 5.68,
+    "rmse": 7.62,
+    "r2": 0.9126,
+    "within_5min_pct": 56.33,
+    "within_15min_pct": 94.19
+  },
+  {
+    "model_name": "Linear Regression Baseline",
+    "mae": 5.05,
+    "rmse": 6.66,
+    "r2": 0.9331,
+    "within_5min_pct": 60.11,
+    "within_15min_pct": 96.45
+  },
+  {
+    "model_name": "Ridge Regression (L2 Regularized)",
+    "mae": 5.05,
+    "rmse": 6.66,
+    "r2": 0.9331,
+    "within_5min_pct": 60.11,
+    "within_15min_pct": 96.45
+  },
+  {
+    "model_name": "AI Dynamic Gradient Boosted Model (Champion)",
+    "mae": 4.28,
+    "rmse": 5.57,
+    "r2": 0.9533,
+    "within_5min_pct": 66.55,
+    "within_15min_pct": 98.59
+  }
+]

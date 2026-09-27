@@ -1,0 +1,13 @@
+[
+  "train_priority",
+  "current_delay",
+  "distance_to_target",
+  "stops_remaining",
+  "total_route_distance",
+  "pct_journey_completed",
+  "scheduled_transit_min",
+  "dep_hour",
+  "is_target_junction",
+  "target_zone_code",
+  "target_hist_delay"
+]

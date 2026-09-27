@@ -1,0 +1,12 @@
+.git
+.gitignore
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.system_generated
+tests
+UI Designs Ideas
+IR Delay Dataset Dummy/combined_delay.csv
+IR Delay Dataset 2025/

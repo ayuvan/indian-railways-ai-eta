@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRIS Nexroute • IR Control Room & Dispatch Radar</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="control-room-body">
+
+  <!-- Top Switcher & Status Bar -->
+  <div class="portal-nav-bar control-nav-bar">
+    <div class="portal-nav-container">
+      <div class="portal-tabs">
+        <a href="/" class="portal-tab">
+          <span class="portal-tab-icon">🚆</span>
+          <span>Passenger Mobile App</span>
+          <span class="tab-pill">Public Portal</span>
+        </a>
+        <a href="/control-room" class="portal-tab active staff-active">
+          <span class="portal-tab-icon">🎛️</span>
+          <span>Nexroute Control Console</span>
+          <span class="tab-pill staff-pill">Staff Active</span>
+        </a>
+      </div>
+
+      <div class="portal-nav-right">
+        <!-- 3D Dark / Light Theme Switcher -->
+        <div class="theme-toggle-wrap" title="Toggle Console Theme">
+          <button id="theme-toggle-cr" class="theme-switch" aria-label="Toggle Theme">
+            <span class="icon-sun">☀️</span>
+            <span class="theme-thumb"></span>
+            <span class="icon-moon">🌙</span>
+          </button>
+        </div>
+
+        <div class="terminal-badge">
+          <span class="live-dot-green"></span>
+          <span id="cr-stream-status">NTES 100Hz STREAM: LOCKED</span>
+        </div>
+
+        <!-- Cabin Sound FX & Audio Chime Toggle -->
+        <button class="audio-toggle-btn btn-audio-pill staff-audio-pill" title="Toggle Station Chimes & Dispatch Audio">
+          <span>🔊</span>
+          <span>Audio ON</span>
+        </button>
+
+        <div class="lang-selector-wrapper staff-lang-wrap">
+          <span class="lang-icon">🌐</span>
+          <select id="lang-selector-cr" class="lang-select" aria-label="Select Language">
+            <option value="en">English (EN)</option>
+            <option value="hi">हिंदी (HI)</option>
+            <option value="ta">தமிழ் (TA)</option>
+            <option value="te">తెలుగు (TE)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nexroute Brand Top Bar (inspired by PIC 3.webp) -->
+  <header class="nexroute-topbar">
+    <div class="nex-brand">
+      <div class="nex-logo-glyph">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.5">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 3v18M3 12h18"/>
+        </svg>
+      </div>
+      <span class="nex-title">Nexroute</span>
+      <span class="nex-badge-cris">CRIS • Section Dispatch Control</span>
+    </div>
+
+    <div class="nex-topbar-meta">
+      <div class="nex-date-badge font-mono">
+        <span class="cal-icon">🗓️</span>
+        <span id="nex-live-date">Mon | 11/05/2026</span>
+      </div>
+      <div class="nex-bell-wrap" title="Operational Alerts (Signal / Speed Alerts)">
+        <button class="nex-bell-btn">🔔</button>
+        <span class="bell-alert-dot"></span>
+      </div>
+      <div class="nex-user-profile" title="Chief Controller (MAS Division)">
+        <div class="user-avatar-circle">
+          <span>CC</span>
+          <span class="user-online-ring"></span>
+        </div>
+        <div class="user-info-text">
+          <span class="user-name">R. Sengupta</span>
+          <span class="user-role font-mono">CHIEF CONTROLLER</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Nexroute Full-Console Container (inspired by PIC 3) -->
+  <div class="nexroute-console-layout">
+
+    <!-- Narrow Left Icon Navigation Strip -->
+    <aside class="nex-nav-strip">
+      <div class="nex-brand-icon">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#f97316" stroke-width="2.2">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 3v18M3 12h18"/>
+        </svg>
+      </div>
+
+      <nav class="nex-icon-menu">
+        <button class="icon-btn active" title="Track Circuits Radar">🗺️</button>
+        <button class="icon-btn" title="Train Dispatch">🚆</button>
+        <button class="icon-btn" title="Block Signaling">⚡</button>
+        <button class="icon-btn" title="HOER Crew Roster">👨‍✈️</button>
+        <button class="icon-btn" title="Cleaning & Watering SLA">🧼</button>
+        <button class="icon-btn" title="Telemetry Logs">📊</button>
+      </nav>
+
+      <div class="nex-nav-bottom">
+        <button class="icon-btn" title="Settings">⚙️</button>
+      </div>
+    </aside>
+
+    <!-- Column 1: Fleet Tracking List Column (inspired by PIC 3) -->
+    <aside class="nex-fleet-panel">
+      <div class="fleet-header">
+        <h3 class="fleet-title">Tracking List</h3>
+        <span class="badge badge-accent" id="fleet-count-badge">5 Trains</span>
+      </div>
+
+      <div class="fleet-search-wrap">
+        <input type="text" id="fleet-search-input" class="fleet-search-input" placeholder="Search Headcode or UID...">
+        <button class="fleet-filter-btn" title="Filter Fleet">⚡</button>
+      </div>
+
+      <!-- Fleet Item Cards -->
+      <div class="fleet-list" id="fleet-list">
+        <!-- Injected dynamically by control_room.js -->
+      </div>
+    </aside>
+
+    <!-- Center Stage: Interactive Track Radar Canvas & Bottom Analytical Charts -->
+    <main class="nex-radar-center">
+      
+      <!-- Radar Map Header Bar -->
+      <div class="radar-top-bar">
+        <div class="radar-sector-info">
+          <span class="sector-title font-bold">SOUTHERN MAINLINE • MAS ➔ CBE CORRIDOR</span>
+          <span class="sector-sub font-mono text-muted">Block Circuit 412 | 25kV AC OHE Energized</span>
+        </div>
+        <div class="radar-controls">
+          <div class="map-view-switcher">
+            <button id="btn-mode-gis" class="btn btn-cr-mode active" title="Switch to Real-World GIS Satellite Railway Map">🗺️ GIS Rail Map</button>
+            <button id="btn-mode-cad" class="btn btn-cr-mode" title="Switch to PIC 3 Tactical Electronic Interlocking Radar">🎛️ Tactical Radar</button>
+          </div>
+          <button id="cr-btn-inject-signal" class="btn btn-cr-warning">⚠️ Inject Red Signal Halt</button>
+          <button id="cr-btn-clear-signal" class="btn btn-cr-outline">🟢 Clear Block Section</button>
+          <button id="cr-btn-recenter" class="btn recenter-btn" title="Snap View to Live Locomotive">🎯 Re-center</button>
+          <div class="zoom-pill font-mono">
+            <button id="radar-zoom-in">+</button>
+            <span id="radar-zoom-val">100%</span>
+            <button id="radar-zoom-out">-</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-World GIS Map & Tactical Radar Container -->
+      <div class="radar-canvas-container">
+        <!-- 1. Real-World Leaflet + CartoDB Dark Matter + OpenRailwayMap Container -->
+        <div id="nex-gis-map" class="nex-gis-map"></div>
+        <!-- 2. Electronic Interlocking Radar Canvas (PIC 3) -->
+        <canvas id="nex-radar-canvas" width="850" height="380" style="display: none;"></canvas>
+        
+        <div class="radar-hud-overlay">
+          <span class="hud-item"><span class="hud-dot text-success">●</span> Line 1: Clear (MPS 110)</span>
+          <span class="hud-item"><span class="hud-dot text-warning">●</span> Loop Line 2: Speed Restr 30 km/h</span>
+          <span class="hud-item"><span class="hud-dot text-danger">●</span> Siding Yard: Occupied</span>
+          <span class="hud-item"><span class="hud-dot text-accent">●</span> OpenRailwayMap: Track Network Live</span>
+        </div>
+      </div>
+
+      <!-- Bottom Analytical Telemetry Graphs (Volume, Latency, Variance - inspired by PIC 3) -->
+      <div class="nex-analytics-grid">
+        <!-- Chart 1: Active Trains Volume -->
+        <div class="analytic-card">
+          <div class="ac-header">
+            <span class="ac-icon">📊</span>
+            <span class="ac-title">ACTIVE TRAINS [VOLUME]</span>
+          </div>
+          <div class="bar-chart-container" id="chart-volume">
+            <div class="bar-col"><div class="bar-fill" style="height: 45%;"></div><span class="bar-lbl font-mono">06:00</span></div>
+            <div class="bar-col"><div class="bar-fill" style="height: 85%;"></div><span class="bar-lbl font-mono">08:00</span></div>
+            <div class="bar-col"><div class="bar-fill" style="height: 60%;"></div><span class="bar-lbl font-mono">10:00</span></div>
+            <div class="bar-col"><div class="bar-fill" style="height: 95%;"></div><span class="bar-lbl font-mono">12:00</span></div>
+          </div>
+        </div>
+
+        <!-- Chart 2: Telemetry Ping Latency -->
+        <div class="analytic-card">
+          <div class="ac-header">
+            <span class="ac-icon">📶</span>
+            <span class="ac-title">TELEMETRY PING LATENCY</span>
+            <span class="ac-stat font-mono text-accent">18ms avg</span>
+          </div>
+          <div class="latency-bars" id="chart-latency">
+            <!-- Dynamically populated latency bars -->
+          </div>
+        </div>
+
+        <!-- Chart 3: Fleet Velocity Variance -->
+        <div class="analytic-card">
+          <div class="ac-header">
+            <span class="ac-icon">📈</span>
+            <span class="ac-title">FLEET VELOCITY VARIANCE</span>
+            <span class="ac-stat font-mono text-success">±2.4%</span>
+          </div>
+          <div class="variance-chart" id="chart-variance">
+            <div class="var-zero-line"></div>
+            <!-- Dynamic delta variance indicators -->
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Column 3: Deep Telemetry Inspector & Intelligent Staff Scheduling (inspired by PIC 1 & 2) -->
+    <aside class="nex-inspector-panel">
+      
+      <!-- Active Train Header (as in PIC 1) -->
+      <div class="inspector-card-header">
+        <div class="ich-top">
+          <span class="train-type-icon">🚆</span>
+          <div>
+            <span id="insp-category" class="font-bold text-accent">Passenger Exp</span>
+            <span id="insp-headcode" class="font-mono insp-code">1A23</span>
+          </div>
+          <span id="insp-status-badge" class="badge badge-success">IN TRANSIT</span>
+        </div>
+
+        <div class="ich-corridor">
+          <div class="corridor-stop">
+            <span class="stn-code-lg" id="insp-origin-code">EUS</span>
+            <span class="stn-name-sm" id="insp-origin-name">Chennai (MAS)</span>
+            <span class="stn-time-sm" id="insp-origin-time">22:00 IST</span>
+          </div>
+          <div class="corridor-mid">
+            <span class="mid-arrow">➔</span>
+            <span class="mid-hours" id="insp-journey-hours">7h 50m</span>
+          </div>
+          <div class="corridor-stop text-right">
+            <span class="stn-code-lg text-accent" id="insp-dest-code">MAN</span>
+            <span class="stn-name-sm" id="insp-dest-name">Coimbatore (CBE)</span>
+            <span class="stn-time-sm text-accent" id="insp-dest-eta">ETA 06:25</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loco & Driver Specs (as in PIC 2) -->
+      <div class="loco-specs-box font-mono">
+        <div class="cr-loco-art-wrap">
+          <img id="cr-loco-img" src="/static/assets/wap7_locomotive.svg" class="cr-loco-img-preview" alt="Locomotive Vector Graphic" />
+        </div>
+        <div class="spec-row"><span>LOCO CLASS:</span> <strong id="insp-loco">WAP-7 #30452 (RPM)</strong></div>
+        <div class="spec-row"><span>BLOCK SECTOR:</span> <strong id="insp-sector">Sector 4, Mainline</strong></div>
+        <div class="spec-row"><span>DRIVER / TM:</span> <strong id="insp-driver">R. Sharma (ID: 842)</strong></div>
+      </div>
+
+      <!-- Live Telemetry Group (as in PIC 2) -->
+      <div class="telemetry-group">
+        <div class="tg-header">
+          <span class="tg-title font-bold">LIVE TELEMETRY (NTES STREAM)</span>
+        </div>
+        <div class="tg-grid font-mono">
+          <div class="tg-item">
+            <span class="tg-lbl">SPEED</span>
+            <span id="insp-speed" class="tg-val text-accent">105 km/h (Limit: 110)</span>
+          </div>
+          <div class="tg-item">
+            <span class="tg-lbl">POWER</span>
+            <span id="insp-power" class="tg-val">25kV AC (Pantograph Up)</span>
+          </div>
+          <div class="tg-item">
+            <span class="tg-lbl">BRAKES</span>
+            <span id="insp-brakes" class="tg-val text-success">Released (5.0 bar)</span>
+          </div>
+          <div class="tg-item">
+            <span class="tg-lbl">EST. PLATFORM</span>
+            <span id="insp-platform" class="tg-val text-success font-bold">Platform 2 (Berth OK)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Intelligent Staff Scheduling Sub-Section (HOER & Cleaning) -->
+      <div class="staff-scheduler-section">
+        <div class="ss-header">
+          <span class="font-bold text-accent">⚙️ INTELLIGENT STAFF & SLA AUTO-SCHEDULER</span>
+        </div>
+
+        <div class="ss-box">
+          <div class="ss-row">
+            <span class="font-bold">Loco Pilot Duty (HOER):</span>
+            <span id="insp-duty-status" class="badge badge-success">Duty On Schedule</span>
+          </div>
+          <div class="duty-bar-wrap">
+            <div id="insp-duty-fill" class="duty-bar-fill" style="width: 58%;"></div>
+          </div>
+          <p id="insp-duty-action" class="ss-desc font-mono">Duty 4.6 hrs / 8.0 hrs Max. Relief crew scheduled at Jolarpettai (JTJ).</p>
+        </div>
+
+        <div class="ss-box">
+          <div class="ss-row">
+            <span class="font-bold">Coach Cleaning & Watering SLA:</span>
+            <span id="insp-clean-badge" class="badge badge-info">Auto-Synced</span>
+          </div>
+          <p id="insp-clean-action" class="ss-desc font-mono">Contractor shift pushed by +25m to match dynamic arrival.</p>
+        </div>
+      </div>
+
+      <!-- Vertical Route Progress Stepper (as in PIC 2) -->
+      <div class="vertical-route-stepper">
+        <div class="stepper-header">
+          <span class="font-bold">DOWNSTREAM ROUTE PROGRESS & ETA</span>
+        </div>
+        <div class="stepper-list" id="insp-stepper-list">
+          <!-- Populated dynamically by control_room.js -->
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="/static/audio_fx.js"></script>
+  <script src="/static/control_room.js"></script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 160" width="100%" height="100%">
+  <defs>
+    <linearGradient id="vandeBody" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="60%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#e2e8f0"/>
+    </linearGradient>
+    <linearGradient id="vandeBlue" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="40%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="vandeOrange" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ea580c"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Aerodynamic Vande Bharat Bullet Train Nose -->
+  <!-- Underframe & Bogies -->
+  <rect x="35" y="118" width="330" height="12" rx="4" fill="#0f172a"/>
+  <!-- Wheels with Metallic Hubs -->
+  <g fill="#334155" stroke="#64748b" stroke-width="2">
+    <circle cx="70" cy="132" r="14"/>
+    <circle cx="70" cy="132" r="6" fill="#cbd5e1"/>
+    <circle cx="110" cy="132" r="14"/>
+    <circle cx="110" cy="132" r="6" fill="#cbd5e1"/>
+    <circle cx="280" cy="132" r="14"/>
+    <circle cx="280" cy="132" r="6" fill="#cbd5e1"/>
+    <circle cx="320" cy="132" r="14"/>
+    <circle cx="320" cy="132" r="6" fill="#cbd5e1"/>
+  </g>
+
+  <!-- Streamlined Aerodynamic Main Chassis -->
+  <path d="M 20 115 
+           Q 20 100 35 90 
+           L 350 90 
+           Q 370 90 380 100 
+           L 380 118 
+           L 20 118 Z" fill="url(#vandeBlue)"/>
+
+  <!-- Upper Aerodynamic Body Profile -->
+  <path d="M 20 115 
+           Q 50 65 140 45 
+           L 375 45 
+           Q 385 45 385 55 
+           L 385 92 
+           L 35 92 
+           Q 20 105 20 115 Z" fill="url(#vandeBody)" stroke="#cbd5e1" stroke-width="1.5"/>
+
+  <!-- Vande Bharat Signature Blue Ribbon Window Band -->
+  <path d="M 52 75 
+           Q 85 58 140 54 
+           L 385 54 
+           L 385 75 
+           L 52 75 Z" fill="url(#vandeBlue)"/>
+
+  <!-- Panoramic Continuous Tinted Windows -->
+  <g fill="#020617" stroke="#38bdf8" stroke-width="0.8">
+    <!-- Driver Front Slanted Windshield -->
+    <path d="M 58 73 Q 80 60 115 56 L 125 73 Z" fill="#0284c7" opacity="0.9"/>
+    <!-- Passenger Sealed Windows -->
+    <rect x="140" y="58" width="38" height="15" rx="3"/>
+    <rect x="185" y="58" width="38" height="15" rx="3"/>
+    <rect x="230" y="58" width="38" height="15" rx="3"/>
+    <rect x="275" y="58" width="38" height="15" rx="3"/>
+    <rect x="320" y="58" width="38" height="15" rx="3"/>
+    <rect x="365" y="58" width="18" height="15" rx="2"/>
+  </g>
+
+  <!-- High-Speed Dynamic Orange Saffron Accent Stripe -->
+  <path d="M 24 112 
+           Q 65 85 145 78 
+           L 385 78 
+           L 385 82 
+           L 145 82 
+           Q 65 89 24 116 Z" fill="url(#vandeOrange)"/>
+
+  <!-- Roof Aerodynamic Fairing & Pantograph Well -->
+  <path d="M 160 45 L 350 45 L 340 40 L 175 40 Z" fill="#94a3b8"/>
+  <!-- High Speed Single-Arm Pantograph -->
+  <path d="M 290 40 L 310 22 L 325 32 L 305 18 L 335 18" fill="none" stroke="#ea580c" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Twin LED Projector Headlights (Pure Beam) -->
+  <g filter="url(#glow)">
+    <circle cx="36" cy="106" r="4.5" fill="#38bdf8"/>
+    <circle cx="44" cy="103" r="3.5" fill="#ffffff"/>
+  </g>
+
+  <!-- Front Coupler Shroud -->
+  <path d="M 18 116 Q 16 118 20 120 L 32 120 Q 30 116 28 116 Z" fill="#475569"/>
+
+  <!-- Emblems & Badges -->
+  <text x="140" y="87" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="7" fill="#ffffff" letter-spacing="1">VANDE BHARAT</text>
+  <text x="320" y="87" font-family="'JetBrains Mono', monospace" font-weight="700" font-size="6.5" fill="#f8fafc">TRAIN 18 • 160 KM/H</text>
+</svg>
