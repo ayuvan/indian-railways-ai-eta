@@ -76,6 +76,11 @@
     </div>
 
     <div class="nex-topbar-meta">
+      <button id="btn-roi-calculator" class="btn btn-roi-pill font-mono" title="Railway Ministry Financial ROI & Operational Cost Savings Calculator">
+        <span>💰</span>
+        <span>Ministry ROI: ₹19.4 Cr/yr</span>
+      </button>
+
       <div class="nex-date-badge font-mono">
         <span class="cal-icon">🗓️</span>
         <span id="nex-live-date">Mon | 11/05/2026</span>
@@ -292,6 +297,39 @@
         </div>
       </div>
 
+      <!-- KAVACH (TCAS) AUTOMATIC TRAIN PROTECTION PANEL -->
+      <div class="kavach-telemetry-section">
+        <div class="kavach-header">
+          <div class="kavach-title-wrap">
+            <span class="kavach-shield-icon">🛡️</span>
+            <span class="font-bold text-accent">KAVACH (TCAS) ATP SUPERVISION</span>
+          </div>
+          <span id="insp-kavach-status" class="badge badge-kavach-lock">ARMED • RADIO LOCK</span>
+        </div>
+        <div class="kavach-grid font-mono">
+          <div class="kavach-item">
+            <span class="k-lbl">MOVEMENT AUTH</span>
+            <span id="insp-kavach-ma" class="k-val text-success">4.2 km (Clear)</span>
+          </div>
+          <div class="kavach-item">
+            <span class="k-lbl">SAFE BRAKE DIST</span>
+            <span id="insp-kavach-brake-dist" class="k-val text-warning">680 m</span>
+          </div>
+          <div class="kavach-item">
+            <span class="k-lbl">TARGET SPEED</span>
+            <span id="insp-kavach-target-spd" class="k-val text-primary">105 / 110 km/h</span>
+          </div>
+          <div class="kavach-item">
+            <span class="k-lbl">SPAD RISK</span>
+            <span id="insp-kavach-spad" class="k-val text-success">NOMINAL (0.00%)</span>
+          </div>
+        </div>
+        <div class="kavach-footer font-mono">
+          <span>📡 UHF 433.5MHz Direct Track-to-Train Lock</span>
+          <span id="insp-kavach-rfid">RFID: KM-214-UP</span>
+        </div>
+      </div>
+
       <!-- Intelligent Staff Scheduling Sub-Section (HOER & Cleaning) -->
       <div class="staff-scheduler-section">
         <div class="ss-header">
@@ -330,6 +368,101 @@
 
     </aside>
 
+  <!-- MODAL: RAILWAY MINISTRY OPERATIONAL ROI & COST SAVINGS CALCULATOR -->
+  <div id="modal-roi-calculator" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="roi-modal-title">
+    <div class="modal-dialog modal-dialog-lg">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-header-icon">💰</span>
+          <div>
+            <h3 id="roi-modal-title" class="modal-title">Railway Ministry ROI &amp; Operational Cost Savings Engine</h3>
+            <p class="modal-subtitle font-mono">Southern Railway • Chennai Division (MAS) Operating Financial Model</p>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="btn-close-roi" aria-label="Close Modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="roi-hero-card">
+          <div class="rh-left">
+            <span class="rh-label font-mono">PROJECTED ANNUAL DIVISIONAL SAVINGS</span>
+            <span class="rh-val font-mono" id="disp-annual-savings">₹19.42 Crores</span>
+            <span class="rh-sub font-mono">₹5.32 Lakhs daily recurring operating economy</span>
+          </div>
+          <div class="rh-right font-mono">
+            <div class="rh-stat">
+              <span class="rhs-lbl">CO₂ Reduction:</span>
+              <strong id="disp-co2-saved" class="text-success">14.46 Tonnes/day</strong>
+            </div>
+            <div class="rh-stat">
+              <span class="rhs-lbl">25kV Traction:</span>
+              <strong id="disp-kwh-saved" class="text-primary">17,640 kWh/day</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Division Simulator Sliders -->
+        <div class="roi-sliders-box">
+          <div class="slider-group">
+            <div class="sg-label font-mono">
+              <span>Monitored Daily Corridor Trains:</span>
+              <strong id="val-trains-slider" class="text-accent font-bold">42 Trains</strong>
+            </div>
+            <input type="range" id="roi-trains-slider" min="10" max="120" value="42" class="form-range">
+          </div>
+          <div class="slider-group">
+            <div class="sg-label font-mono">
+              <span>Average Delay Mitigated per Train:</span>
+              <strong id="val-delay-slider" class="text-accent font-bold">8.5 Minutes</strong>
+            </div>
+            <input type="range" id="roi-delay-slider" min="2" max="25" step="0.5" value="8.5" class="form-range">
+          </div>
+        </div>
+
+        <!-- Detailed Financial Tariff Breakdown Tiles -->
+        <div class="roi-tiles-grid font-mono">
+          <div class="roi-tile">
+            <span class="rt-icon">👨‍✈️</span>
+            <div class="rt-content">
+              <span class="rt-title">HOER Running Crew Overtime Avoided</span>
+              <strong class="rt-val text-success" id="disp-hoer-saved">₹1,70,400 / day</strong>
+              <p class="rt-desc">Fines of ₹14,200/crew shift prevented under HOER Rules 2005 via automatic relief crew rosters.</p>
+            </div>
+          </div>
+
+          <div class="roi-tile">
+            <span class="rt-icon">🧼</span>
+            <div class="rt-content">
+              <span class="rt-title">Contractor Cleaning SLA Detention</span>
+              <strong class="rt-val text-success" id="disp-cleaning-saved">₹1,21,500 / day</strong>
+              <p class="rt-desc">Contractor idle fees (₹4,500/hr) avoided by dynamically pushing cleaning rosters to match true arrival.</p>
+            </div>
+          </div>
+
+          <div class="roi-tile">
+            <span class="rt-icon">⚡</span>
+            <div class="rt-content">
+              <span class="rt-title">25kV Traction Energy Conserved</span>
+              <strong class="rt-val text-success" id="disp-energy-saved">₹1,44,648 / day</strong>
+              <p class="rt-desc">Smoothed signal headway eliminates stop-and-go panic braking; saves 420 kWh traction energy per trip.</p>
+            </div>
+          </div>
+
+          <div class="roi-tile">
+            <span class="rt-icon">🎫</span>
+            <div class="rt-content">
+              <span class="rt-title">TDR Ticket Refund Protection</span>
+              <strong class="rt-val text-success" id="disp-refund-saved">₹95,000 / day</strong>
+              <p class="rt-desc">Automatic Alternate Journey discovery protects passenger connections, avoiding statutory TDR refund claims.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer font-mono">
+          <span>Grounded in Indian Railways Financial Operating Manual &amp; Railway Board Tariff Guidelines.</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>

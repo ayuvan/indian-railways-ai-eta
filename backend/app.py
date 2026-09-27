@@ -28,6 +28,9 @@ from backend.realtime_feed import ntes_client
 from backend.behavior_profile import profiler_instance
 from backend.alternate_journeys import journey_finder
 from backend.staff_scheduler import scheduler_instance
+from backend.self_learning import self_learning_engine
+from backend.explainability import generate_eta_explanation
+from backend.roi_calculator import calculate_divisional_roi
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
@@ -113,9 +116,15 @@ async def get_route(train_no: str):
         "route": route
     }
 
+class LearningFeedbackRequest(BaseModel):
+    train_no: str
+    station_code: str
+    predicted_delay_min: float
+    actual_delay_min: float
+
 @app.post("/api/predict_eta")
 async def predict_eta(req: PredictionRequest):
-    """Generates dynamic AI ETA predictions for upcoming stops."""
+    """Generates dynamic AI ETA predictions for upcoming stops with online self-learning calibration & XAI."""
     result = predictor.predict_downstream_eta(
         train_no=req.train_no,
         current_station_idx=req.current_station_idx,
@@ -130,9 +139,74 @@ async def predict_eta(req: PredictionRequest):
     )
     if "error" in result:
         raise HTTPException(status_code=400, detail=result["error"])
+
+    # 1. Apply Online Continual Self-Learning Bias Corrections to Station Forecasts
+    forecasts = result.get("stations_forecast", [])
+    for stn in forecasts:
+        stn_code = stn.get("station_code")
+        bias = self_learning_engine.get_bias_correction(stn_code)
+        if bias != 0.0:
+            stn["predicted_delay_min"] = max(0.0, round(stn["predicted_delay_min"] + bias, 1))
+            stn["self_learning_bias_applied_min"] = bias
+
+    # 2. Attach Explainable AI (XAI) Attribution Factor Decomposition
+    dest_stop = forecasts[-1] if forecasts else None
+    final_delay = dest_stop["predicted_delay_min"] if dest_stop else req.current_delay_min
+    remaining_dist = dest_stop["distance_from_current_km"] if dest_stop else 100.0
+    remaining_stops = len(forecasts)
+
+    xai_breakdown = generate_eta_explanation(
+        train_no=result.get("train_no", req.train_no),
+        train_name=result.get("train_name", "Express"),
+        train_type=result.get("train_type", "EXP-TRAINS"),
+        current_delay=req.current_delay_min,
+        predicted_delay=final_delay,
+        distance_km=remaining_dist,
+        stops_remaining=remaining_stops,
+        weather=req.weather,
+        congestion=req.congestion,
+        day_of_week=req.day_of_week,
+        occasion=req.occasion,
+        civil_disruption=req.civil_disruption,
+        technical_malfunction=req.technical_malfunction,
+        timetable_precedence=req.timetable_precedence
+    )
+    result["ai_explainability"] = xai_breakdown
+    result["model_version"] = self_learning_engine.model_version
     return result
 
-# --- NEW INNOVATION ENDPOINTS ---
+# --- CONTINUAL SELF-LEARNING & XAI ENDPOINTS ---
+
+@app.get("/api/self_learning/status")
+async def get_self_learning_status():
+    """Returns real-time telemetry metrics from the Bayesian continual learning engine."""
+    return self_learning_engine.get_status()
+
+@app.post("/api/self_learning/feedback")
+async def submit_learning_feedback(req: LearningFeedbackRequest):
+    """Ingests ground truth arrival report, adjusts Kalman section weights, and detects drift."""
+    return self_learning_engine.record_actual_arrival(
+        train_no=req.train_no,
+        station_code=req.station_code,
+        predicted_delay=req.predicted_delay_min,
+        actual_delay=req.actual_delay_min
+    )
+
+@app.get("/api/operations/roi_metrics")
+async def get_operations_roi(trains: int = 42, delay_saved: float = 8.5):
+    """Computes quantified financial, human-capital (HOER), energy, and TDR savings."""
+    return calculate_divisional_roi(active_trains_count=trains, avg_delay_mitigation_mins=delay_saved)
+
+@app.get("/api/cross_verification_report")
+async def get_cross_verification_report():
+    """Returns official mathematical cross-verification report against empirical 2025 logs."""
+    report_path = os.path.join(ARTIFACTS_DIR, "cross_verification_report.json")
+    if os.path.exists(report_path):
+        with open(report_path, "r") as f:
+            return json.load(f)
+    return {"status": "Pending execution"}
+
+# --- REAL-TIME & INNOVATION ENDPOINTS ---
 
 @app.get("/api/realtime/{train_no}")
 async def get_realtime_ntes_feed(train_no: str, stn: Optional[str] = None):

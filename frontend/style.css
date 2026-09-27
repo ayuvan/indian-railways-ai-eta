@@ -3238,4 +3238,777 @@ body {
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
+/* ==========================================================================
+   INNOVATION 1: EXPLAINABLE AI (XAI) ATTRIBUTION BREAKDOWN & MODAL
+   ========================================================================== */
+
+.btn-explain-xai {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(99, 102, 241, 0.25));
+  border: 1px solid rgba(14, 165, 233, 0.4);
+  color: #38bdf8;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-explain-xai:hover {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.3), rgba(99, 102, 241, 0.4));
+  border-color: #38bdf8;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
+  transform: translateY(-1px);
+}
+
+.barcode-action-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.modal-dialog-lg {
+  max-width: 680px;
+}
+
+.modal-dialog-xl {
+  max-width: 920px;
+}
+
+.xai-verdict-card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+[data-theme="light"] .xai-verdict-card {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+}
+
+.xai-verdict-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.xai-train-badge {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #f97316;
+}
+
+.xai-confidence-badge {
+  font-size: 0.75rem;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #10b981;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.xai-verdict-text {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  line-height: 1.45;
+  margin-bottom: 0.75rem;
+}
+
+.xai-meta-pills {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.xai-pill {
+  font-size: 0.75rem;
+  background: rgba(30, 41, 59, 0.7);
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="light"] .xai-pill {
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+
+.xai-factors-section {
+  margin-bottom: 1.25rem;
+}
+
+.xai-section-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.xai-factors-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.xai-factor-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 4px solid #f97316;
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  transition: all 0.15s ease;
+}
+
+[data-theme="light"] .xai-factor-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.xai-factor-card.factor-recovery {
+  border-left-color: #10b981;
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.xai-factor-card.factor-delay {
+  border-left-color: #ef4444;
+}
+
+.xai-factor-card.factor-neutral {
+  border-left-color: #64748b;
+}
+
+.xf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.xf-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.xf-name {
+  font-size: 0.88rem;
+  color: var(--text-primary);
+}
+
+.xf-delta {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.xf-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+  margin-bottom: 0.5rem;
+}
+
+.xf-bar-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+[data-theme="light"] .xf-bar-track {
+  background: #e2e8f0;
+}
+
+.xf-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.fill-recovery {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.fill-delay {
+  background: linear-gradient(90deg, #f97316, #ef4444);
+}
+
+.xf-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.xai-self-learning-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0.85rem;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  color: #10b981;
+}
+
+.slf-left {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* ==========================================================================
+   INNOVATION 2 & 4: SIH JURY EVALUATION MODE & BENCHMARKS
+   ========================================================================== */
+
+.btn-sih-jury-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(249, 115, 22, 0.25));
+  border: 1px solid rgba(234, 179, 8, 0.5);
+  color: #eab308;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-sih-jury-pill:hover {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.35), rgba(249, 115, 22, 0.45));
+  border-color: #facc15;
+  box-shadow: 0 0 16px rgba(234, 179, 8, 0.35);
+  transform: translateY(-1px);
+}
+
+.sih-modal-header {
+  border-bottom: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.jury-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+}
+
+.jury-tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.jury-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.jury-tab-btn.active {
+  color: #f97316;
+  border-bottom-color: #f97316;
+}
+
+.jury-tab-content {
+  display: none;
+}
+
+.jury-tab-content.active {
+  display: block;
+}
+
+.jury-banner-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+[data-theme="light"] .jury-banner-summary {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+}
+
+.jbs-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.jbs-val {
+  font-size: 1.45rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+}
+
+.jbs-lbl {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 0.2rem;
+}
+
+.jbs-sub {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.jury-table-wrap {
+  margin-bottom: 1rem;
+  overflow-x: auto;
+}
+
+.jury-subheading {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.jury-benchmark-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.jury-benchmark-table th {
+  background: rgba(30, 41, 59, 0.8);
+  color: var(--text-secondary);
+  padding: 0.65rem 0.85rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .jury-benchmark-table th {
+  background: #e2e8f0;
+  color: #334155;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.jury-benchmark-table td {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] .jury-benchmark-table td {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.table-row-highlight {
+  background: rgba(249, 115, 22, 0.1);
+  border-top: 2px solid #f97316 !important;
+}
+
+.pill-green {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.jury-footnote {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-top: 0.5rem;
+}
+
+.jury-scenarios-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.scenario-card {
+  display: flex;
+  gap: 1rem;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  align-items: flex-start;
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .scenario-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.scenario-card:hover {
+  border-color: #f97316;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.sc-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.sc-content {
+  flex: 1;
+}
+
+.sc-title {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.sc-desc {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+  margin-bottom: 0.75rem;
+}
+
+.sc-action-btn {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  background: rgba(249, 115, 22, 0.15);
+  border: 1px solid rgba(249, 115, 22, 0.4);
+  color: #f97316;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sc-action-btn:hover {
+  background: #f97316;
+  color: #ffffff;
+}
+
+/* Architecture Flow */
+.arch-boxes-flow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.arch-box {
+  flex: 1;
+  min-width: 170px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  text-align: center;
+}
+
+[data-theme="light"] .arch-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.arch-box.highlight-box {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.06);
+}
+
+.ab-num {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #f97316;
+  margin-bottom: 0.35rem;
+}
+
+.arch-box p {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+}
+
+.arch-arrow {
+  color: #f97316;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   INNOVATION 2: KAVACH TCAS AUTOMATIC TRAIN PROTECTION PANEL
+   ========================================================================== */
+
+.kavach-telemetry-section {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+[data-theme="light"] .kavach-telemetry-section {
+  background: #f8fafc;
+  border: 1px solid #a7f3d0;
+}
+
+.kavach-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.kavach-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+}
+
+.badge-kavach-lock {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  color: #10b981;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.kavach-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.kavach-item {
+  background: rgba(8, 14, 26, 0.6);
+  padding: 0.4rem 0.55rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="light"] .kavach-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.k-lbl {
+  display: block;
+  font-size: 0.6rem;
+  color: #94a3b8;
+  margin-bottom: 0.15rem;
+}
+
+.k-val {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.kavach-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: #64748b;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 0.35rem;
+}
+
+/* ==========================================================================
+   INNOVATION 3: RAILWAY MINISTRY OPERATIONAL ROI CALCULATOR
+   ========================================================================== */
+
+.btn-roi-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(14, 165, 233, 0.25));
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  color: #34d399;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-roi-pill:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.35), rgba(14, 165, 233, 0.45));
+  border-color: #10b981;
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.35);
+  transform: translateY(-1px);
+}
+
+.roi-hero-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(14, 165, 233, 0.12));
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.rh-label {
+  font-size: 0.7rem;
+  color: #10b981;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.rh-val {
+  display: block;
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0.2rem 0;
+}
+
+[data-theme="light"] .rh-val {
+  color: #0f172a;
+}
+
+.rh-sub {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.rh-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+}
+
+.roi-sliders-box {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+[data-theme="light"] .roi-sliders-box {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+}
+
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.sg-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.form-range {
+  width: 100%;
+  accent-color: #f97316;
+  cursor: pointer;
+}
+
+.roi-tiles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.roi-tile {
+  display: flex;
+  gap: 0.75rem;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem;
+  align-items: flex-start;
+}
+
+[data-theme="light"] .roi-tile {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+
+.rt-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.rt-content {
+  flex: 1;
+}
+
+.rt-title {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.2rem;
+}
+
+.rt-val {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.rt-desc {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.modal-footer {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-top: 0.6rem;
+}
+
+
 

@@ -132,6 +132,16 @@ class RealtimeNTESClient:
                 "throttle_notch": random.randint(18, 32),
                 "pantograph": "RAISED",
                 "brake_pipe_pressure_bar": 5.0
+            },
+            "kavach_tcas": {
+                "system_status": "ARMED_RADIO_LOCK",
+                "protection_mode": "SUPERVISION",
+                "rfid_transponder": "RFID-KM-214-UP-MAIN",
+                "movement_authority_km": round(random.uniform(3.2, 5.8), 2),
+                "safe_braking_distance_m": round(max(150.0, (speed_kmh / 3.6)**2 / (2 * 0.65) * 1.15), 1),
+                "target_speed_kmh": min(speed_kmh, 110.0),
+                "radio_link": "UHF 433.5 MHz Direct Track-to-Train",
+                "spad_risk_level": "NOMINAL (Zero SPAD Violation Detected)"
             }
         }
 

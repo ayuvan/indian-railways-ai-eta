@@ -1,0 +1,25 @@
+{
+  "samples_ingested": 1241,
+  "section_bias_corrections": {
+    "MAS-AJJ": -0.8,
+    "AJJ-KPD": 1.4,
+    "KPD-JTJ": 0.5,
+    "JTJ-SA": -1.2,
+    "SA-ED": 0.2,
+    "ED-TUP": -0.6,
+    "TUP-CBE": 1.8,
+    "KPD": 0.15
+  },
+  "model_version": "v1.2 (Self-Calibrating Continual)",
+  "recent_residuals": [
+    2.4,
+    3.1,
+    1.9,
+    2.8,
+    3.0,
+    2.2,
+    2.7,
+    3.0
+  ],
+  "last_updated": "2026-09-27 21:56:07 IST"
+}

@@ -158,6 +158,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function setupEventListeners() {
+  setupInnovationModalListeners();
+
   // Theme Switcher (3D Toggle)
   if (el.themeToggleBtn) {
     el.themeToggleBtn.addEventListener('click', () => {
@@ -717,8 +719,15 @@ async function triggerRecalculate() {
     });
 
     const data = await res.json();
+    state.lastPredictionResult = data;
     const forecast = data.stations_forecast || [];
     renderETATable(forecast, currDist);
+
+    // Refresh Explainability modal if active
+    const xaiModal = document.getElementById('modal-explain-eta');
+    if (xaiModal && !xaiModal.classList.contains('hidden') && data.ai_explainability) {
+      renderExplainabilityModal(data.ai_explainability, data.model_version);
+    }
 
     // Render dynamic operational advisory banner
     if (el.simAdvisoryBanner && el.dispSimAdvisory) {
@@ -1180,4 +1189,174 @@ function addMinutesToTimeStr(timeStr, minsToAdd) {
   let m = parseInt(parts[1], 10);
   const totalMins = ((h * 60 + m + Math.round(minsToAdd)) % 1440 + 1440) % 1440;
   return `${String(Math.floor(totalMins / 60)).padStart(2, '0')}:${String(totalMins % 60).padStart(2, '0')}`;
+}
+
+// --- INNOVATION FEATURES: EXPLAINABLE AI & SIH JURY EVALUATION ---
+
+function renderExplainabilityModal(xai, modelVersion) {
+  if (!xai) return;
+  const dispTrain = document.getElementById('xai-disp-train');
+  const dispVerdict = document.getElementById('xai-disp-verdict');
+  const dispTotalDelay = document.getElementById('xai-total-delay');
+  const dispFactorsCount = document.getElementById('xai-factors-count');
+  const dispModelVer = document.getElementById('xai-model-version');
+  const factorsList = document.getElementById('xai-factors-list');
+
+  if (dispTrain && state.currentTrain) {
+    dispTrain.textContent = `Train ${state.currentTrain.train_no} • ${state.currentTrain.train_name}`;
+  }
+  if (dispVerdict) dispVerdict.textContent = xai.summary_verdict || '';
+  if (dispTotalDelay) {
+    const d = xai.total_predicted_delay_min || 0;
+    dispTotalDelay.textContent = d > 0 ? `+${d}m Late` : (d < 0 ? `${d}m Early` : 'Right Time');
+    dispTotalDelay.className = d > 20 ? 'text-danger' : (d > 0 ? 'text-warning' : 'text-success');
+  }
+  if (dispFactorsCount) dispFactorsCount.textContent = xai.factors_count || (xai.attributions ? xai.attributions.length : 0);
+  if (dispModelVer) dispModelVer.textContent = `Model: ${modelVersion || 'Continual Online v1.2'}`;
+
+  if (factorsList && xai.attributions) {
+    factorsList.innerHTML = '';
+    xai.attributions.forEach(factor => {
+      const isRecovery = factor.delta_minutes < 0;
+      const isNeutral = factor.delta_minutes === 0;
+      const card = document.createElement('div');
+      card.className = `xai-factor-card ${isRecovery ? 'factor-recovery' : (isNeutral ? 'factor-neutral' : 'factor-delay')}`;
+
+      const deltaFormatted = factor.delta_minutes > 0 ? `+${factor.delta_minutes}m` : `${factor.delta_minutes}m`;
+      const badgeClass = isRecovery ? 'badge-success' : (factor.category === 'SAFETY' ? 'badge-danger' : 'badge-warning');
+
+      card.innerHTML = `
+        <div class="xf-header">
+          <div class="xf-title-wrap">
+            <span class="xf-name font-bold">${factor.factor_name}</span>
+            <span class="badge ${badgeClass} font-mono">${factor.category}</span>
+          </div>
+          <span class="xf-delta font-mono ${isRecovery ? 'text-success font-bold' : (factor.delta_minutes > 15 ? 'text-danger font-bold' : 'text-warning font-bold')}">${deltaFormatted}</span>
+        </div>
+        <p class="xf-desc">${factor.description}</p>
+        <div class="xf-bar-track">
+          <div class="xf-bar-fill ${isRecovery ? 'fill-recovery' : 'fill-delay'}" style="width: ${Math.max(8, factor.contribution_pct || 15)}%;"></div>
+        </div>
+        <div class="xf-meta font-mono">
+          <span>Attribution Impact: ${factor.contribution_pct || 0}%</span>
+          <span>${isRecovery ? '🟢 Timetable Buffer Slack' : (factor.delta_minutes > 10 ? '🔴 Major Operating Friction' : '🟡 Moderate Dwell Hold')}</span>
+        </div>
+      `;
+      factorsList.appendChild(card);
+    });
+  }
+}
+
+function setupInnovationModalListeners() {
+  const btnExplain = document.getElementById('btn-explain-eta');
+  const modalExplain = document.getElementById('modal-explain-eta');
+  const btnCloseXai = document.getElementById('btn-close-xai');
+
+  const btnJury = document.getElementById('btn-sih-jury-modal');
+  const modalJury = document.getElementById('modal-sih-jury');
+  const btnCloseJury = document.getElementById('btn-close-jury');
+
+  // Explain My ETA Modal
+  if (btnExplain && modalExplain) {
+    btnExplain.addEventListener('click', () => {
+      if (window.railAudio) window.railAudio.playChime();
+      modalExplain.classList.remove('hidden');
+      if (state.lastPredictionResult && state.lastPredictionResult.ai_explainability) {
+        renderExplainabilityModal(state.lastPredictionResult.ai_explainability, state.lastPredictionResult.model_version);
+      } else {
+        triggerRecalculate().then(() => {
+          if (state.lastPredictionResult && state.lastPredictionResult.ai_explainability) {
+            renderExplainabilityModal(state.lastPredictionResult.ai_explainability, state.lastPredictionResult.model_version);
+          }
+        });
+      }
+    });
+  }
+
+  if (btnCloseXai && modalExplain) {
+    btnCloseXai.addEventListener('click', () => {
+      modalExplain.classList.add('hidden');
+    });
+  }
+
+  // SIH Jury Evaluation Modal
+  if (btnJury && modalJury) {
+    btnJury.addEventListener('click', () => {
+      if (window.railAudio) window.railAudio.playChime();
+      modalJury.classList.remove('hidden');
+    });
+  }
+
+  if (btnCloseJury && modalJury) {
+    btnCloseJury.addEventListener('click', () => {
+      modalJury.classList.add('hidden');
+    });
+  }
+
+  // Close modals on overlay backdrop click
+  [modalExplain, modalJury].forEach(m => {
+    if (m) {
+      m.addEventListener('click', (e) => {
+        if (e.target === m) m.classList.add('hidden');
+      });
+    }
+  });
+
+  // Jury Modal Tab Navigation
+  document.querySelectorAll('.jury-tab-btn').forEach(tabBtn => {
+    tabBtn.addEventListener('click', () => {
+      if (window.railAudio) window.railAudio.playTap();
+      document.querySelectorAll('.jury-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.jury-tab-content').forEach(c => c.classList.remove('active'));
+
+      tabBtn.classList.add('active');
+      const targetId = tabBtn.getAttribute('data-tab');
+      const targetContent = document.getElementById(targetId);
+      if (targetContent) targetContent.classList.add('active');
+    });
+  });
+
+  // 1-Click Disruption Scenario Triggers for SIH Jury Demo
+  const btnFog = document.getElementById('demo-fog-btn');
+  if (btnFog) {
+    btnFog.addEventListener('click', () => {
+      if (window.railAudio) window.railAudio.playRedSignalAlert();
+      state.weather = 'Dense Fog';
+      if (el.simWeatherSelect) el.simWeatherSelect.value = 'Dense Fog';
+      if (modalJury) modalJury.classList.add('hidden');
+      triggerRecalculate();
+      alert('🌫️ Dense Fog Simulated (North/East Corridor)! Train speed restricted to 30 km/h caution orders. Dynamic ETA updated with Section Delay Propagation.');
+    });
+  }
+
+  const btnFestival = document.getElementById('demo-festival-btn');
+  if (btnFestival) {
+    btnFestival.addEventListener('click', () => {
+      if (window.railAudio) window.railAudio.playChime();
+      if (el.simOccasionSelect) el.simOccasionSelect.value = 'Festival Rush (Diwali/Chhath/Pongal)';
+      if (modalJury) modalJury.classList.add('hidden');
+      triggerRecalculate();
+      alert('🪔 Diwali / Chhath Festival Surge Simulated! Boarding dwell extended (+3m/stop). Connection Rescue alternate trains triggered!');
+    });
+  }
+
+  const btnOhe = document.getElementById('demo-ohe-btn');
+  if (btnOhe) {
+    btnOhe.addEventListener('click', () => {
+      if (window.railAudio) window.railAudio.playRedSignalAlert();
+      if (el.simTechSelect) el.simTechSelect.value = 'OHE Power Tripping / Wire Break';
+      state.currentDelay += 35;
+      if (el.simDelayInput) el.simDelayInput.value = state.currentDelay;
+      if (modalJury) modalJury.classList.add('hidden');
+      triggerRecalculate();
+      alert('⚡ 25kV OHE Overhead Line Tripping Injected! Emergency caution halts at outer signals (+35m delay). Dynamic rescheduling active.');
+    });
+  }
+
+  const btnKavach = document.getElementById('demo-kavach-btn');
+  if (btnKavach) {
+    btnKavach.addEventListener('click', () => {
+      window.location.href = '/control-room';
+    });
+  }
 }

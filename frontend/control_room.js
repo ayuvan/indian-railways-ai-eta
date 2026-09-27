@@ -15,8 +15,17 @@ const crState = {
   speedKmh: 105.0,
   signalAspect: 'GREEN (Clear Track MPS)',
   zoom: 1.0,
-  trainSimT: 0.35 // Position along radar track (0.0 to 1.0)
+  trainSimT: 0.35, // Position along radar track (0.0 to 1.0)
+  kavach: {
+    system_status: 'ARMED_RADIO_LOCK',
+    movement_authority_km: 4.2,
+    safe_braking_distance_m: 680,
+    target_speed_kmh: 105,
+    spad_risk_level: 'NOMINAL (Zero SPAD Violation Detected)',
+    rfid_transponder: 'RFID-KM-214-UP-MAIN'
+  }
 };
+let gisKavachArcLayer = null;
 
 // DOM Cache
 const crEl = {
@@ -319,6 +328,35 @@ function updateGisTrainPosition() {
   }
 
   gisTrainMarker.setTooltipContent(`🚆 ${crState.currentTrainNo} • ${crState.speedKmh.toFixed(0)} km/h • Block 412 CLEAR`);
+
+  // Update Kavach TCAS Safe Dynamic Braking Arc on GIS Map
+  if (gisMap) {
+    const isEmergency = crState.signalAspect && crState.signalAspect.includes('RED');
+    const arcColor = isEmergency ? '#ef4444' : '#10b981';
+    const brakeDistM = crState.kavach?.safe_braking_distance_m || 680;
+    const brakeDistKm = brakeDistM / 1000.0;
+    const headingRad = headingDeg * Math.PI / 180;
+    const dLatBrake = (brakeDistKm / 111.0) * Math.cos(headingRad);
+    const dLngBrake = (brakeDistKm / (111.0 * Math.cos(lat * Math.PI / 180))) * Math.sin(headingRad);
+    const brakeTarget = [lat + dLatBrake, lng + dLngBrake];
+
+    if (!gisKavachArcLayer) {
+      gisKavachArcLayer = L.polyline([[lat, lng], brakeTarget], {
+        color: arcColor,
+        weight: 5,
+        dashArray: '6, 5',
+        opacity: 0.9
+      }).addTo(gisMap);
+      gisKavachArcLayer.bindTooltip(`🛡️ KAVACH ATP: Safe Braking Distance (${brakeDistM.toFixed(0)}m)`, {
+        direction: 'right',
+        className: 'font-mono'
+      });
+    } else {
+      gisKavachArcLayer.setLatLngs([[lat, lng], brakeTarget]);
+      gisKavachArcLayer.setStyle({ color: arcColor });
+      gisKavachArcLayer.setTooltipContent(`🛡️ KAVACH ATP: Safe Braking Distance (${brakeDistM.toFixed(0)}m)`);
+    }
+  }
 }
 
 function setupListeners() {
@@ -445,6 +483,47 @@ function setupListeners() {
       );
       renderFleetList(filtered);
     });
+  }
+
+  // Ministry ROI Modal Controls
+  const btnRoi = document.getElementById('btn-roi-calculator');
+  const modalRoi = document.getElementById('modal-roi-calculator');
+  const btnCloseRoi = document.getElementById('btn-close-roi');
+  const sliderTrains = document.getElementById('roi-trains-slider');
+  const sliderDelay = document.getElementById('roi-delay-slider');
+
+  if (btnRoi && modalRoi) {
+    btnRoi.addEventListener('click', () => {
+      if (window.railAudio) window.railAudio.playChime();
+      modalRoi.classList.remove('hidden');
+      updateRoiMetrics(parseInt(sliderTrains?.value || 42, 10), parseFloat(sliderDelay?.value || 8.5));
+    });
+  }
+
+  if (btnCloseRoi && modalRoi) {
+    btnCloseRoi.addEventListener('click', () => {
+      modalRoi.classList.add('hidden');
+    });
+  }
+
+  if (modalRoi) {
+    modalRoi.addEventListener('click', (e) => {
+      if (e.target === modalRoi) modalRoi.classList.add('hidden');
+    });
+  }
+
+  if (sliderTrains && sliderDelay) {
+    const handleSliderChange = () => {
+      const trains = parseInt(sliderTrains.value, 10);
+      const delaySaved = parseFloat(sliderDelay.value);
+      const valT = document.getElementById('val-trains-slider');
+      const valD = document.getElementById('val-delay-slider');
+      if (valT) valT.textContent = `${trains} Trains`;
+      if (valD) valD.textContent = `${delaySaved.toFixed(1)} Minutes`;
+      updateRoiMetrics(trains, delaySaved);
+    };
+    sliderTrains.addEventListener('input', handleSliderChange);
+    sliderDelay.addEventListener('input', handleSliderChange);
   }
 }
 
@@ -930,6 +1009,22 @@ function drawRadarCanvas() {
   ctx.fillStyle = beamGrad;
   ctx.fill();
 
+  // 6b. Kavach TCAS ATP Dynamic Braking Arc (Tactical Radar)
+  const isRedAspect = crState.signalAspect && crState.signalAspect.includes('RED');
+  ctx.save();
+  ctx.strokeStyle = isRedAspect ? 'rgba(239, 68, 68, 0.95)' : 'rgba(16, 185, 129, 0.9)';
+  ctx.lineWidth = 2.2;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  const arcDist = Math.max(35, (crState.speedKmh / 110) * 85);
+  ctx.arc(0, 0, arcDist, -Math.PI / 3.8, Math.PI / 3.8);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = isRedAspect ? '#ef4444' : '#10b981';
+  ctx.font = 'bold 8.5px JetBrains Mono, monospace';
+  ctx.fillText('🛡️ KAVACH 680m', arcDist + 5, 3);
+  ctx.restore();
+
   // 7. Draw Sleek White Train Locomotive Carriage (from PIC 3)
   ctx.shadowColor = '#38bdf8';
   ctx.shadowBlur = 12;
@@ -990,6 +1085,59 @@ async function pollTelemetryData() {
     if (data.sync_status === 'REALTIME_ACTIVE') {
       crState.speedKmh = data.current_speed_kmh;
       crEl.inspSpeed.textContent = `${data.current_speed_kmh} km/h (Limit: 110)`;
+      if (data.signal_aspect) {
+        crState.signalAspect = data.signal_aspect;
+      }
+      if (data.kavach_tcas) {
+        crState.kavach = data.kavach_tcas;
+        renderKavachTelemetry(data.kavach_tcas);
+      }
     }
   } catch (e) {}
+}
+
+function renderKavachTelemetry(k) {
+  if (!k) return;
+  const statusEl = document.getElementById('insp-kavach-status');
+  const maEl = document.getElementById('insp-kavach-ma');
+  const brakeEl = document.getElementById('insp-kavach-brake-dist');
+  const targetSpdEl = document.getElementById('insp-kavach-target-spd');
+  const spadEl = document.getElementById('insp-kavach-spad');
+  const rfidEl = document.getElementById('insp-kavach-rfid');
+
+  if (statusEl) statusEl.textContent = k.system_status ? k.system_status.replace('_', ' ') : 'ARMED • RADIO LOCK';
+  if (maEl) maEl.textContent = `${k.movement_authority_km || 4.2} km (Clear)`;
+  if (brakeEl) brakeEl.textContent = `${k.safe_braking_distance_m || 680} m`;
+  if (targetSpdEl) targetSpdEl.textContent = `${k.target_speed_kmh || 105} / 110 km/h`;
+  if (spadEl) spadEl.textContent = k.spad_risk_level || 'NOMINAL (0.00%)';
+  if (rfidEl) rfidEl.textContent = `RFID: ${k.rfid_transponder || 'KM-214-UP'}`;
+}
+
+async function updateRoiMetrics(trains = 42, delaySaved = 8.5) {
+  try {
+    const res = await fetch(`/api/operations/roi_metrics?trains=${trains}&delay_saved=${delaySaved}`);
+    if (!res.ok) return;
+    const data = await res.json();
+
+    const annEl = document.getElementById('disp-annual-savings');
+    const hoerEl = document.getElementById('disp-hoer-saved');
+    const cleanEl = document.getElementById('disp-cleaning-saved');
+    const energyEl = document.getElementById('disp-energy-saved');
+    const refundEl = document.getElementById('disp-refund-saved');
+    const co2El = document.getElementById('disp-co2-saved');
+    const kwhEl = document.getElementById('disp-kwh-saved');
+
+    if (annEl) annEl.textContent = `₹${data.annual_projected_savings_crores} Crores`;
+    if (hoerEl) hoerEl.textContent = `₹${(data.breakdown.crew_hoer_overtime_saved_inr || 0).toLocaleString('en-IN')} / day`;
+    if (cleanEl) cleanEl.textContent = `₹${(data.breakdown.contractor_cleaning_slas_saved_inr || 0).toLocaleString('en-IN')} / day`;
+    if (energyEl) energyEl.textContent = `₹${(data.breakdown.traction_energy_conserved_inr || 0).toLocaleString('en-IN')} / day`;
+    if (refundEl) refundEl.textContent = `₹${(data.breakdown.passenger_tdr_refunds_protected_inr || 0).toLocaleString('en-IN')} / day`;
+    if (co2El) co2El.textContent = `${data.environmental_impact.daily_co2_reduction_tonnes} Tonnes/day`;
+    if (kwhEl) kwhEl.textContent = `${(data.environmental_impact.daily_kwh_conserved || 0).toLocaleString('en-IN')} kWh/day`;
+
+    const topBtn = document.getElementById('btn-roi-calculator');
+    if (topBtn) topBtn.innerHTML = `<span>💰</span><span>Ministry ROI: ₹${data.annual_projected_savings_crores} Cr/yr</span>`;
+  } catch (e) {
+    console.error('ROI calculation error:', e);
+  }
 }
