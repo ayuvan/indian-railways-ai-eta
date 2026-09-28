@@ -553,6 +553,56 @@
           <button id="btn-step-sim" class="btn btn-secondary">▶️ Advance Next Section</button>
           <button id="btn-inject-delay" class="btn btn-warning">⚠️ Inject 20m Signal Halt</button>
           <button id="btn-reset-sim" class="btn btn-outline">🔄 Reset Journey</button>
+          <button id="btn-toggle-explain-sim" class="btn btn-explain-xai" title="Toggle AI Feature Attribution Factors Dropdown">
+            <span>🧠 Explain My ETA</span>
+            <span id="xai-toggle-arrow" class="xai-arrow">▼</span>
+          </button>
+        </div>
+
+        <!-- COLLAPSIBLE EXPLAINABLE AI (XAI) ATTRIBUTION DROPDOWN (Directly Below Simulator) -->
+        <div id="xai-dropdown-drawer" class="xai-dropdown-drawer hidden">
+          <div class="xai-drawer-header">
+            <div class="xai-drawer-title-wrap">
+              <span class="xai-drawer-icon">🧠</span>
+              <div>
+                <h4 class="xai-drawer-title">Explainable AI (XAI) Attribution Breakdown</h4>
+                <p class="xai-drawer-sub font-mono">SHAP-Style Dynamic Decomposition • Transparent Operational Drivers</p>
+              </div>
+            </div>
+            <button class="xai-drawer-close-btn" id="btn-close-xai-drawer" title="Collapse Explanation">▲ Collapse</button>
+          </div>
+
+          <div class="xai-drawer-body">
+            <div class="xai-verdict-card">
+              <div class="xai-verdict-header">
+                <span class="xai-train-badge font-mono" id="xai-disp-train">Train 12673</span>
+                <span class="xai-confidence-badge font-mono">98.6% Confidence (160k Ground Truth)</span>
+              </div>
+              <p class="xai-verdict-text font-bold" id="xai-disp-verdict">
+                Delay is primarily driven by live running beacon delay and weather visibility restrictions.
+              </p>
+              <div class="xai-meta-pills font-mono">
+                <span class="xai-pill"><strong id="xai-total-delay">+18.5m</strong> Net Forecast Delay</span>
+                <span class="xai-pill"><strong id="xai-factors-count">5</strong> Factor Drivers</span>
+                <span class="xai-pill text-success" id="xai-model-version">Model: Continual v1.2</span>
+              </div>
+            </div>
+
+            <div class="xai-factors-section">
+              <h5 class="xai-section-title">Decomposed Operational Factors (Additive SHAP Delta):</h5>
+              <div class="xai-factors-list" id="xai-factors-list">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
+            <div class="xai-self-learning-footer font-mono">
+              <div class="slf-left">
+                <span class="live-dot-green"></span>
+                <span>Bayesian Continual Self-Learning Engine: <strong>ACTIVE</strong></span>
+              </div>
+              <span class="slf-right" id="xai-slf-bias">Online Section Calibration: Locked</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -669,77 +719,36 @@
 
   </main>
 
-  <!-- Floating Mobile App Bottom Navigation Dock (inspired by Home page 2) -->
-  <nav class="floating-mobile-dock" aria-label="Quick Navigation">
-    <button class="dock-btn active" id="dock-btn-track" title="Live Boarding Pass">
-      <span class="dock-icon">🚆</span>
-      <span class="dock-lbl">Ticket</span>
-    </button>
-    <button class="dock-btn" id="dock-btn-map" title="Virtual Track Map">
-      <span class="dock-icon">🗺️</span>
-      <span class="dock-lbl">Track Map</span>
-    </button>
-    <button class="dock-btn" id="dock-btn-sim" title="What-If Simulator">
-      <span class="dock-icon">⚡</span>
-      <span class="dock-lbl">Simulator</span>
-    </button>
-    <button class="dock-btn" id="dock-btn-dna" title="Behavioral DNA">
-      <span class="dock-icon">🧠</span>
-      <span class="dock-lbl">DNA Profile</span>
-    </button>
-    <a href="/control-room" class="dock-btn dock-staff-btn" title="Control Room Console">
-      <span class="dock-icon">🎛️</span>
-      <span class="dock-lbl">Staff Radar</span>
-    </a>
-  </nav>
-
-  <!-- MODAL 1: EXPLAINABLE AI (XAI) ATTRIBUTION BREAKDOWN -->
-  <div id="modal-explain-eta" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="xai-modal-title">
-    <div class="modal-dialog modal-dialog-lg">
-      <div class="modal-header">
-        <div class="modal-title-wrap">
-          <span class="modal-header-icon">🧠</span>
-          <div>
-            <h3 id="xai-modal-title" class="modal-title">AI Explainability &amp; Factor Attribution</h3>
-            <p class="modal-subtitle font-mono">SHAP-Style Dynamic Decomposition • Transparent Operational Drivers</p>
-          </div>
-        </div>
-        <button class="modal-close-btn" id="btn-close-xai" aria-label="Close Modal">&times;</button>
-      </div>
-
-      <div class="modal-body">
-        <div class="xai-verdict-card">
-          <div class="xai-verdict-header">
-            <span class="xai-train-badge font-mono" id="xai-disp-train">Train 12673</span>
-            <span class="xai-confidence-badge font-mono">98.6% Confidence (160k Ground Truth)</span>
-          </div>
-          <p class="xai-verdict-text font-bold" id="xai-disp-verdict">
-            Delay is primarily driven by live running beacon delay and weather visibility restrictions.
-          </p>
-          <div class="xai-meta-pills font-mono">
-            <span class="xai-pill"><strong id="xai-total-delay">+18.5m</strong> Net Forecast Delay</span>
-            <span class="xai-pill"><strong id="xai-factors-count">5</strong> Factor Drivers</span>
-            <span class="xai-pill text-success" id="xai-model-version">Model: Continual v1.2</span>
-          </div>
-        </div>
-
-        <div class="xai-factors-section">
-          <h4 class="xai-section-title">Decomposed Operational Factors (Additive SHAP Delta):</h4>
-          <div class="xai-factors-list" id="xai-factors-list">
-            <!-- Dynamically populated -->
-          </div>
-        </div>
-
-        <div class="xai-self-learning-footer font-mono">
-          <div class="slf-left">
-            <span class="live-dot-green"></span>
-            <span>Bayesian Continual Self-Learning Engine: <strong>ACTIVE</strong></span>
-          </div>
-          <span class="slf-right" id="xai-slf-bias">Online Section Calibration: Locked</span>
-        </div>
-      </div>
+  <!-- Floating Mobile App Bottom Navigation Dock (Auto-hiding with Entrance Hint & Hover Reveal) -->
+  <nav class="floating-mobile-dock" id="floating-mobile-dock" aria-label="Quick Navigation">
+    <div class="dock-peek-handle" id="dock-peek-handle" title="Hover or click to view quick navigation menu">
+      <span class="dock-peek-arrow">▲</span>
+      <span class="dock-peek-label font-mono">QUICK MENU</span>
+      <span class="dock-peek-pulse"></span>
     </div>
-  </div>
+    <div class="dock-buttons-wrap">
+      <button class="dock-btn active" id="dock-btn-track" title="Live Boarding Pass">
+        <span class="dock-icon">🚆</span>
+        <span class="dock-lbl">Ticket</span>
+      </button>
+      <button class="dock-btn" id="dock-btn-map" title="Virtual Track Map">
+        <span class="dock-icon">🗺️</span>
+        <span class="dock-lbl">Track Map</span>
+      </button>
+      <button class="dock-btn" id="dock-btn-sim" title="What-If Simulator">
+        <span class="dock-icon">⚡</span>
+        <span class="dock-lbl">Simulator</span>
+      </button>
+      <button class="dock-btn" id="dock-btn-dna" title="Behavioral DNA">
+        <span class="dock-icon">🧠</span>
+        <span class="dock-lbl">DNA Profile</span>
+      </button>
+      <a href="/control-room" class="dock-btn dock-staff-btn" title="Control Room Console">
+        <span class="dock-icon">🎛️</span>
+        <span class="dock-lbl">Staff Radar</span>
+      </a>
+    </div>
+  </nav>
 
   <!-- MODAL 2: SIH HACKATHON JURY PITCH & BENCHMARK EVALUATION MODE -->
   <div id="modal-sih-jury" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="jury-modal-title">

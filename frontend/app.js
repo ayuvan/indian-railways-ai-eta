@@ -723,9 +723,9 @@ async function triggerRecalculate() {
     const forecast = data.stations_forecast || [];
     renderETATable(forecast, currDist);
 
-    // Refresh Explainability modal if active
-    const xaiModal = document.getElementById('modal-explain-eta');
-    if (xaiModal && !xaiModal.classList.contains('hidden') && data.ai_explainability) {
+    // Refresh Explainability dropdown drawer if open
+    const xaiDrawer = document.getElementById('xai-dropdown-drawer');
+    if (xaiDrawer && !xaiDrawer.classList.contains('hidden') && data.ai_explainability) {
       renderExplainabilityModal(data.ai_explainability, data.model_version);
     }
 
@@ -1248,19 +1248,27 @@ function renderExplainabilityModal(xai, modelVersion) {
 }
 
 function setupInnovationModalListeners() {
-  const btnExplain = document.getElementById('btn-explain-eta');
-  const modalExplain = document.getElementById('modal-explain-eta');
-  const btnCloseXai = document.getElementById('btn-close-xai');
+  const btnToggleExplainSim = document.getElementById('btn-toggle-explain-sim');
+  const btnExplainBarcode = document.getElementById('btn-explain-eta');
+  const btnCloseXaiDrawer = document.getElementById('btn-close-xai-drawer');
+  const xaiDrawer = document.getElementById('xai-dropdown-drawer');
+  const xaiArrow = document.getElementById('xai-toggle-arrow');
 
   const btnJury = document.getElementById('btn-sih-jury-modal');
   const modalJury = document.getElementById('modal-sih-jury');
   const btnCloseJury = document.getElementById('btn-close-jury');
 
-  // Explain My ETA Modal
-  if (btnExplain && modalExplain) {
-    btnExplain.addEventListener('click', () => {
+  // Explain My ETA Collapsible Dropdown Drawer (Directly Below Simulator)
+  function toggleXaiDrawer(forceOpen = null) {
+    if (!xaiDrawer) return;
+    const isCurrentlyHidden = xaiDrawer.classList.contains('hidden');
+    const shouldOpen = forceOpen !== null ? forceOpen : isCurrentlyHidden;
+
+    if (shouldOpen) {
       if (window.railAudio) window.railAudio.playChime();
-      modalExplain.classList.remove('hidden');
+      xaiDrawer.classList.remove('hidden');
+      if (xaiArrow) xaiArrow.classList.add('arrow-rotated');
+
       if (state.lastPredictionResult && state.lastPredictionResult.ai_explainability) {
         renderExplainabilityModal(state.lastPredictionResult.ai_explainability, state.lastPredictionResult.model_version);
       } else {
@@ -1270,35 +1278,74 @@ function setupInnovationModalListeners() {
           }
         });
       }
+
+      // Smoothly scroll down to drawer so it is immediately noticeable
+      setTimeout(() => {
+        xaiDrawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    } else {
+      xaiDrawer.classList.add('hidden');
+      if (xaiArrow) xaiArrow.classList.remove('arrow-rotated');
+    }
+  }
+
+  if (btnToggleExplainSim) {
+    btnToggleExplainSim.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleXaiDrawer();
     });
   }
 
-  if (btnCloseXai && modalExplain) {
-    btnCloseXai.addEventListener('click', () => {
-      modalExplain.classList.add('hidden');
+  if (btnExplainBarcode) {
+    btnExplainBarcode.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Ensure simulation drawer is open if it was hidden
+      const simDrawer = document.querySelector('.simulation-drawer');
+      if (simDrawer && simDrawer.classList.contains('hidden')) {
+        simDrawer.classList.remove('hidden');
+      }
+      toggleXaiDrawer(true);
     });
   }
 
-  // SIH Jury Evaluation Modal
+  if (btnCloseXaiDrawer) {
+    btnCloseXaiDrawer.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleXaiDrawer(false);
+    });
+  }
+
+  // SIH Jury Pitch & Benchmark Evaluation Modal (Elevated Fixed Popup)
   if (btnJury && modalJury) {
-    btnJury.addEventListener('click', () => {
+    btnJury.addEventListener('click', (e) => {
+      e.preventDefault();
       if (window.railAudio) window.railAudio.playChime();
       modalJury.classList.remove('hidden');
     });
   }
 
   if (btnCloseJury && modalJury) {
-    btnCloseJury.addEventListener('click', () => {
+    btnCloseJury.addEventListener('click', (e) => {
+      e.preventDefault();
       modalJury.classList.add('hidden');
     });
   }
 
-  // Close modals on overlay backdrop click
-  [modalExplain, modalJury].forEach(m => {
-    if (m) {
-      m.addEventListener('click', (e) => {
-        if (e.target === m) m.classList.add('hidden');
-      });
+  // Close popup modal on overlay backdrop click
+  if (modalJury) {
+    modalJury.addEventListener('click', (e) => {
+      if (e.target === modalJury) {
+        modalJury.classList.add('hidden');
+      }
+    });
+  }
+
+  // Close popup modal on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (modalJury && !modalJury.classList.contains('hidden')) {
+        modalJury.classList.add('hidden');
+      }
     }
   });
 
@@ -1357,6 +1404,60 @@ function setupInnovationModalListeners() {
   if (btnKavach) {
     btnKavach.addEventListener('click', () => {
       window.location.href = '/control-room';
+    });
+  }
+
+  // Initialize Floating Mobile Dock Auto-Hide, Mouse Reveal & Load Hint Animation
+  setupFloatingDockUX();
+}
+
+function setupFloatingDockUX() {
+  const dock = document.getElementById('floating-mobile-dock');
+  const peekHandle = document.getElementById('dock-peek-handle');
+  if (!dock) return;
+
+  // 1. Initial Page Load Entrance Hint:
+  // Dock gracefully pops up so the user discovers it, then settles into bottom peek handle
+  dock.classList.add('dock-entrance-anim');
+  setTimeout(() => {
+    dock.classList.remove('dock-entrance-anim');
+  }, 3200);
+
+  // 2. Mouse approach detection:
+  // When cursor approaches within 85px of bottom of screen, smoothly slide dock into view
+  let hideTimer = null;
+  window.addEventListener('mousemove', (e) => {
+    const distFromBottom = window.innerHeight - e.clientY;
+    if (distFromBottom <= 85) {
+      if (hideTimer) {
+        clearTimeout(hideTimer);
+        hideTimer = null;
+      }
+      dock.classList.add('dock-revealed');
+    } else {
+      if (!hideTimer && dock.classList.contains('dock-revealed')) {
+        hideTimer = setTimeout(() => {
+          dock.classList.remove('dock-revealed');
+          hideTimer = null;
+        }, 500);
+      }
+    }
+  });
+
+  // Keep revealed if mouse enters dock itself
+  dock.addEventListener('mouseenter', () => {
+    if (hideTimer) {
+      clearTimeout(hideTimer);
+      hideTimer = null;
+    }
+    dock.classList.add('dock-revealed');
+  });
+
+  // 3. Handle click/tap on peek handle
+  if (peekHandle) {
+    peekHandle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dock.classList.toggle('dock-revealed');
     });
   }
 }
