@@ -8,7 +8,8 @@
 
 > **Official Solution for Smart India Hackathon (SIH)**  
 > **Problem Statement ID: SIH-2024 / Dynamic ETA Prediction for Indian Railways**  
-> **Author & Lead Architect:** Yuvan Shankar (`yuvan`)  
+> **Author & Lead Architect:** Yuvan Siddharth (`yuvan`)  
+> **Team Members:** Janhavi Sathish, Janani, A Kanishkar, Akshara Ashok, Aisvarya Lakshme Kannan  
 > **Live Demo:** [https://indian-railways-ai-eta.onrender.com](https://indian-railways-ai-eta.onrender.com)  
 > **Documentation:** [Download Official PDF Operations Guidebook](docs/Indian_Railways_AI_ETA_Guidebook.pdf)
 
@@ -214,7 +215,8 @@ A complete, publication-grade technical manual and user operations guidebook has
 
 ## 👥 Credits & Contact
 
-- **Lead Developer & AI Architect:** Yuvan Shankar (`yuvan`)
+- **Lead Developer & AI Architect:** Yuvan Siddharth (`yuvan`)
+- **Team Members:** Janhavi Sathish, Janani, A Kanishkar, Akshara Ashok, Aisvarya Lakshme Kannan
 - **Institution:** Smart India Hackathon Prototype Development Team
 - **Repository:** [https://github.com/ayuvan/indian-railways-ai-eta](https://github.com/ayuvan/indian-railways-ai-eta)
 - **License:** Distributed under the MIT License. See `LICENSE` for more information.

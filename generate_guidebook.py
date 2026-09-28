@@ -51,7 +51,7 @@ class NumberedCanvas(canvas.Canvas):
 
         # Running Footer on all pages
         self.setFont("Helvetica", 8)
-        self.drawString(54, 38, "Confidential • Ministry of Railways & SIH Evaluation Prototype • Author: Yuvan Shankar")
+        self.drawString(54, 38, "Confidential • Ministry of Railways & SIH Evaluation Prototype • Lead: Yuvan Siddharth")
         page_str = f"Page {self._pageNumber} of {page_count}"
         self.drawRightString(612 - 54, 38, page_str)
         self.setStrokeColor(colors.HexColor("#E2E8F0"))
@@ -188,15 +188,15 @@ def build_pdf(filename="docs/Indian_Railways_AI_ETA_Guidebook.pdf"):
     # Meta Overview Box
     meta_box = [
         [
-            Paragraph("<b>Lead Engineer:</b> Yuvan Shankar (yuvan)", body_style),
+            Paragraph("<b>Lead Engineer:</b> Yuvan Siddharth", body_style),
             Paragraph("<b>Champion Model:</b> HistGradientBoostingRegressor", body_style),
         ],
         [
-            Paragraph("<b>Repository:</b> github.com/ayuvan/indian-railways-ai-eta", body_style),
+            Paragraph("<b>Team Members:</b> Janhavi Sathish, Janani, A Kanishkar, Akshara Ashok, Aisvarya Lakshme Kannan", body_style),
             Paragraph("<b>Validation Dataset:</b> 160,625 Segment Records (CRIS)", body_style),
         ],
         [
-            Paragraph("<b>Live URL:</b> indian-railways-ai-eta.onrender.com", body_style),
+            Paragraph("<b>Repository:</b> github.com/ayuvan/indian-railways-ai-eta", body_style),
             Paragraph("<b>Core Achievement:</b> 26.8% Error Reduction vs NTES", body_style),
         ]
     ]
