@@ -115,12 +115,12 @@
       </div>
 
       <nav class="nex-icon-menu">
-        <button class="icon-btn active" title="Track Circuits Radar">🗺️</button>
-        <button class="icon-btn" title="Train Dispatch">🚆</button>
-        <button class="icon-btn" title="Block Signaling">⚡</button>
-        <button class="icon-btn" title="HOER Crew Roster">👨‍✈️</button>
-        <button class="icon-btn" title="Cleaning & Watering SLA">🧼</button>
-        <button class="icon-btn" title="Telemetry Logs">📊</button>
+        <button id="cr-nav-radar" class="icon-btn active" data-view="radar" title="Track Circuits Radar">🗺️</button>
+        <button id="cr-nav-dispatch" class="icon-btn" data-view="dispatch" title="Train Dispatch">🚆</button>
+        <button id="cr-nav-signaling" class="icon-btn" data-view="signaling" title="Block Signaling">⚡</button>
+        <button id="cr-nav-hoer" class="icon-btn" data-view="hoer" title="HOER Crew Roster">👨‍✈️</button>
+        <button id="cr-nav-cleaning" class="icon-btn" data-view="cleaning" title="Cleaning & Watering SLA">🧼</button>
+        <button id="cr-nav-telemetry" class="icon-btn" data-view="telemetry" title="Telemetry Logs">📊</button>
       </nav>
 
       <div class="nex-nav-bottom">
@@ -149,81 +149,591 @@
     <!-- Center Stage: Interactive Track Radar Canvas & Bottom Analytical Charts -->
     <main class="nex-radar-center">
       
-      <!-- Radar Map Header Bar -->
-      <div class="radar-top-bar">
-        <div class="radar-sector-info">
-          <span class="sector-title font-bold">SOUTHERN MAINLINE • MAS ➔ CBE CORRIDOR</span>
-          <span class="sector-sub font-mono text-muted">Block Circuit 412 | 25kV AC OHE Energized</span>
-        </div>
-        <div class="radar-controls">
-          <div class="map-view-switcher">
-            <button id="btn-mode-gis" class="btn btn-cr-mode active" title="Switch to Real-World GIS Satellite Railway Map">🗺️ GIS Rail Map</button>
-            <button id="btn-mode-cad" class="btn btn-cr-mode" title="Switch to PIC 3 Tactical Electronic Interlocking Radar">🎛️ Tactical Radar</button>
+      <!-- 1. View Pane: Track Circuits Radar & Real-World GIS Map -->
+      <div id="cr-view-radar" class="cr-view-pane active">
+        <!-- Radar Map Header Bar -->
+        <div class="radar-top-bar">
+          <div class="radar-sector-info">
+            <span class="sector-title font-bold">SOUTHERN MAINLINE • MAS ➔ CBE CORRIDOR</span>
+            <span class="sector-sub font-mono text-muted">Block Circuit 412 | 25kV AC OHE Energized</span>
           </div>
-          <button id="cr-btn-inject-signal" class="btn btn-cr-warning">⚠️ Inject Red Signal Halt</button>
-          <button id="cr-btn-clear-signal" class="btn btn-cr-outline">🟢 Clear Block Section</button>
-          <button id="cr-btn-recenter" class="btn recenter-btn" title="Snap View to Live Locomotive">🎯 Re-center</button>
-          <div class="zoom-pill font-mono">
-            <button id="radar-zoom-in">+</button>
-            <span id="radar-zoom-val">100%</span>
-            <button id="radar-zoom-out">-</button>
+          <div class="radar-controls">
+            <div class="map-view-switcher">
+              <button id="btn-mode-gis" class="btn btn-cr-mode active" title="Switch to Real-World GIS Satellite Railway Map">🗺️ GIS Rail Map</button>
+              <button id="btn-mode-cad" class="btn btn-cr-mode" title="Switch to PIC 3 Tactical Electronic Interlocking Radar">🎛️ Tactical Radar</button>
+            </div>
+            <button id="cr-btn-inject-signal" class="btn btn-cr-warning">⚠️ Inject Red Signal Halt</button>
+            <button id="cr-btn-clear-signal" class="btn btn-cr-outline">🟢 Clear Block Section</button>
+            <button id="cr-btn-recenter" class="btn recenter-btn" title="Snap View to Live Locomotive">🎯 Re-center</button>
+            <div class="zoom-pill font-mono">
+              <button id="radar-zoom-in">+</button>
+              <span id="radar-zoom-val">100%</span>
+              <button id="radar-zoom-out">-</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-World GIS Map & Tactical Radar Container -->
+        <div class="radar-canvas-container">
+          <!-- 1. Real-World Leaflet + CartoDB Dark Matter + OpenRailwayMap Container -->
+          <div id="nex-gis-map" class="nex-gis-map"></div>
+          <!-- 2. Electronic Interlocking Radar Canvas (PIC 3) -->
+          <canvas id="nex-radar-canvas" width="850" height="380" style="display: none;"></canvas>
+          
+          <div class="radar-hud-overlay">
+            <span class="hud-item"><span class="hud-dot text-success">●</span> Line 1: Clear (MPS 110)</span>
+            <span class="hud-item"><span class="hud-dot text-warning">●</span> Loop Line 2: Speed Restr 30 km/h</span>
+            <span class="hud-item"><span class="hud-dot text-danger">●</span> Siding Yard: Occupied</span>
+            <span class="hud-item"><span class="hud-dot text-accent">●</span> OpenRailwayMap: Track Network Live</span>
+          </div>
+        </div>
+
+        <!-- Bottom Analytical Telemetry Graphs (Volume, Latency, Variance - inspired by PIC 3) -->
+        <div class="nex-analytics-grid">
+          <!-- Chart 1: Active Trains Volume -->
+          <div class="analytic-card">
+            <div class="ac-header">
+              <span class="ac-icon">📊</span>
+              <span class="ac-title">ACTIVE TRAINS [VOLUME]</span>
+            </div>
+            <div class="bar-chart-container" id="chart-volume">
+              <div class="bar-col"><div class="bar-fill" style="height: 45%;"></div><span class="bar-lbl font-mono">06:00</span></div>
+              <div class="bar-col"><div class="bar-fill" style="height: 85%;"></div><span class="bar-lbl font-mono">08:00</span></div>
+              <div class="bar-col"><div class="bar-fill" style="height: 60%;"></div><span class="bar-lbl font-mono">10:00</span></div>
+              <div class="bar-col"><div class="bar-fill" style="height: 95%;"></div><span class="bar-lbl font-mono">12:00</span></div>
+            </div>
+          </div>
+
+          <!-- Chart 2: Telemetry Ping Latency -->
+          <div class="analytic-card">
+            <div class="ac-header">
+              <span class="ac-icon">📶</span>
+              <span class="ac-title">TELEMETRY PING LATENCY</span>
+              <span class="ac-stat font-mono text-accent">18ms avg</span>
+            </div>
+            <div class="latency-bars" id="chart-latency">
+              <!-- Dynamically populated latency bars -->
+            </div>
+          </div>
+
+          <!-- Chart 3: Fleet Velocity Variance -->
+          <div class="analytic-card">
+            <div class="ac-header">
+              <span class="ac-icon">📈</span>
+              <span class="ac-title">FLEET VELOCITY VARIANCE</span>
+              <span class="ac-stat font-mono text-success">±2.4%</span>
+            </div>
+            <div class="variance-chart" id="chart-variance">
+              <div class="var-zero-line"></div>
+              <!-- Dynamic delta variance indicators -->
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Real-World GIS Map & Tactical Radar Container -->
-      <div class="radar-canvas-container">
-        <!-- 1. Real-World Leaflet + CartoDB Dark Matter + OpenRailwayMap Container -->
-        <div id="nex-gis-map" class="nex-gis-map"></div>
-        <!-- 2. Electronic Interlocking Radar Canvas (PIC 3) -->
-        <canvas id="nex-radar-canvas" width="850" height="380" style="display: none;"></canvas>
-        
-        <div class="radar-hud-overlay">
-          <span class="hud-item"><span class="hud-dot text-success">●</span> Line 1: Clear (MPS 110)</span>
-          <span class="hud-item"><span class="hud-dot text-warning">●</span> Loop Line 2: Speed Restr 30 km/h</span>
-          <span class="hud-item"><span class="hud-dot text-danger">●</span> Siding Yard: Occupied</span>
-          <span class="hud-item"><span class="hud-dot text-accent">●</span> OpenRailwayMap: Track Network Live</span>
+      <!-- 2. View Pane: Train Dispatch & Section Precedence -->
+      <div id="cr-view-dispatch" class="cr-view-pane hidden">
+        <div class="cr-subview-container">
+          <div class="cr-subview-header">
+            <div class="cr-subview-title-wrap">
+              <span class="cr-subview-icon">🚆</span>
+              <div>
+                <h2 class="cr-subview-title">Train Dispatch &amp; Section Precedence Controller</h2>
+                <p class="cr-subview-desc font-mono">Dynamic precedence arbitration between Vande Bharat / Superfast express trains and trailing freight rakes. Prevents loop line gridlocks.</p>
+              </div>
+            </div>
+            <span class="badge badge-success font-mono">Automatic Precedence Engine Active</span>
+          </div>
+
+          <div class="cr-metric-strip">
+            <div class="cr-stat-card accent-orange">
+              <span class="cr-stat-lbl">Active Section Trains</span>
+              <span class="cr-stat-val font-mono">5 Trains (2 High Priority)</span>
+              <span class="cr-stat-sub">Southern Mainline Sector 4</span>
+            </div>
+            <div class="cr-stat-card accent-green">
+              <span class="cr-stat-lbl">Minimum Section Headway</span>
+              <span class="cr-stat-val font-mono text-success">4.8 Minutes</span>
+              <span class="cr-stat-sub font-mono">Above 3.0m absolute braking margin</span>
+            </div>
+            <div class="cr-stat-card">
+              <span class="cr-stat-lbl">Line Capacity Occupancy</span>
+              <span class="cr-stat-val font-mono">84.2%</span>
+              <span class="cr-stat-sub">Throughput optimization active</span>
+            </div>
+            <div class="cr-stat-card accent-purple">
+              <span class="cr-stat-lbl">Loop Siding Holds</span>
+              <span class="cr-stat-val font-mono">0 Gridlocks</span>
+              <span class="cr-stat-sub">Freight siding clearances on green wave</span>
+            </div>
+          </div>
+
+          <div class="cr-table-card">
+            <div class="cr-table-card-header">
+              <span class="cr-table-title">⚡ Real-Time Section Precedence Hierarchy &amp; Dispatch Clearance</span>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="cr-worker-table font-mono">
+                <thead>
+                  <tr>
+                    <th>Priority Rank</th>
+                    <th>Train &amp; Headcode</th>
+                    <th>Category</th>
+                    <th>Speed / Aspect</th>
+                    <th>Section Block</th>
+                    <th>Precedence Rule</th>
+                    <th>Dispatch Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong class="text-accent">#1 (MAX)</strong></td>
+                    <td><strong>20643 • Vande Bharat Express</strong></td>
+                    <td><span class="cr-task-badge" style="color:#f59e0b; border-color:#f59e0b;">High Speed Premium</span></td>
+                    <td>130 km/h • GREEN</td>
+                    <td>Block 409-UP</td>
+                    <td>Absolute Track Precedence (Zero Loop Holds)</td>
+                    <td><span class="badge badge-success">CLEARANCE GRANTED</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong class="text-accent">#2 (HIGH)</strong></td>
+                    <td><strong>12673 • Cheran Superfast</strong></td>
+                    <td><span class="cr-task-badge">Superfast Mail</span></td>
+                    <td>105 km/h • GREEN</td>
+                    <td>Block 412-UP</td>
+                    <td>Maintain 5m Headway behind Vande Bharat</td>
+                    <td><span class="badge badge-success">GREEN WAVE ACTIVE</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>#3 (NORMAL)</strong></td>
+                    <td><strong>12675 • Kovai Express</strong></td>
+                    <td><span class="cr-task-badge">Intercity SF</span></td>
+                    <td>90 km/h • D-YELLOW</td>
+                    <td>Block 415-UP</td>
+                    <td>Speed Restr to 90 km/h for block separation</td>
+                    <td><span class="badge badge-warning">SPEED REGULATED</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>#4 (FREIGHT)</strong></td>
+                    <td><strong>BOXNHL-5821 • Coal Freight</strong></td>
+                    <td><span class="cr-task-badge" style="color:#94a3b8; border-color:#475569;">Heavy Haul Goods</span></td>
+                    <td>60 km/h • YELLOW</td>
+                    <td>Arakkonam Loop 3</td>
+                    <td>Diverted to Loop Line for Cheran SF Overtake</td>
+                    <td><span class="badge badge-info">HELD AT SIDING</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Bottom Analytical Telemetry Graphs (Volume, Latency, Variance - inspired by PIC 3) -->
-      <div class="nex-analytics-grid">
-        <!-- Chart 1: Active Trains Volume -->
-        <div class="analytic-card">
-          <div class="ac-header">
-            <span class="ac-icon">📊</span>
-            <span class="ac-title">ACTIVE TRAINS [VOLUME]</span>
+      <!-- 3. View Pane: Continuous Block Signaling & Kavach ATP Matrix -->
+      <div id="cr-view-signaling" class="cr-view-pane hidden">
+        <div class="cr-subview-container">
+          <div class="cr-subview-header">
+            <div class="cr-subview-title-wrap">
+              <span class="cr-subview-icon">⚡</span>
+              <div>
+                <h2 class="cr-subview-title">Continuous Block Signaling &amp; Kavach TCAS ATP Matrix</h2>
+                <p class="cr-subview-desc font-mono">4-Aspect automatic block signaling telemetry, track circuit axle counter relays, and Kavach RFID radio balise locks.</p>
+              </div>
+            </div>
+            <span class="badge badge-kavach-lock font-mono">KAVACH TCAS SIL-4 SUPERVISED</span>
           </div>
-          <div class="bar-chart-container" id="chart-volume">
-            <div class="bar-col"><div class="bar-fill" style="height: 45%;"></div><span class="bar-lbl font-mono">06:00</span></div>
-            <div class="bar-col"><div class="bar-fill" style="height: 85%;"></div><span class="bar-lbl font-mono">08:00</span></div>
-            <div class="bar-col"><div class="bar-fill" style="height: 60%;"></div><span class="bar-lbl font-mono">10:00</span></div>
-            <div class="bar-col"><div class="bar-fill" style="height: 95%;"></div><span class="bar-lbl font-mono">12:00</span></div>
+
+          <div class="cr-metric-strip">
+            <div class="cr-stat-card accent-green">
+              <span class="cr-stat-lbl">Kavach System State</span>
+              <span class="cr-stat-val font-mono text-success">ARMED • LOCKED</span>
+              <span class="cr-stat-sub">UHF 433.5MHz Direct Telemetry</span>
+            </div>
+            <div class="cr-stat-card">
+              <span class="cr-stat-lbl">Active Block Circuits</span>
+              <span class="cr-stat-val font-mono">48 Blocks Monitored</span>
+              <span class="cr-stat-sub">Solid-state interlocking (SSI) OK</span>
+            </div>
+            <div class="cr-stat-card accent-orange">
+              <span class="cr-stat-lbl">SPAD Risk Level</span>
+              <span class="cr-stat-val font-mono">0.00% NOMINAL</span>
+              <span class="cr-stat-sub">Zero Signal Passing At Danger violations</span>
+            </div>
+            <div class="cr-stat-card accent-purple">
+              <span class="cr-stat-lbl">Track Balise Transponders</span>
+              <span class="cr-stat-val font-mono">312 RFID Tags</span>
+              <span class="cr-stat-sub">Last sync: RFID-KM-214-UP-MAIN</span>
+            </div>
+          </div>
+
+          <div class="cr-table-card">
+            <div class="cr-table-card-header">
+              <span class="cr-table-title">📶 Automatic Block Section Signals (Chennai Central ➔ Katpadi Corridor)</span>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="cr-worker-table font-mono">
+                <thead>
+                  <tr>
+                    <th>Signal Post</th>
+                    <th>Kilometer Chainage</th>
+                    <th>Current Aspect</th>
+                    <th>Axle Counter Status</th>
+                    <th>Permitted Speed</th>
+                    <th>Kavach Target Dist</th>
+                    <th>Track Circuit State</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>S-412 (Automatic)</strong></td>
+                    <td>KM 214.2</td>
+                    <td><span class="badge badge-success">🟢 GREEN (Clear)</span></td>
+                    <td>Clear (0 Axles)</td>
+                    <td>110 km/h (MPS)</td>
+                    <td>4,200 m</td>
+                    <td><span class="text-success">Energized Relay OK</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>S-414 (Automatic)</strong></td>
+                    <td>KM 216.0</td>
+                    <td><span class="badge badge-success">🟢 GREEN (Clear)</span></td>
+                    <td>Clear (0 Axles)</td>
+                    <td>110 km/h (MPS)</td>
+                    <td>2,400 m</td>
+                    <td><span class="text-success">Energized Relay OK</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>S-416 (Caution)</strong></td>
+                    <td>KM 217.8</td>
+                    <td><span class="badge badge-warning">🟡 YELLOW (Caution)</span></td>
+                    <td>Clear (0 Axles)</td>
+                    <td>60 km/h</td>
+                    <td>1,200 m</td>
+                    <td><span class="text-warning">Speed Supervised</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>S-418 (Home Signal)</strong></td>
+                    <td>KM 219.6</td>
+                    <td><span class="badge badge-danger">🔴 RED (Stop)</span></td>
+                    <td>Occupied (Train 12675 Ahead)</td>
+                    <td>0 km/h</td>
+                    <td>680 m</td>
+                    <td><span class="text-danger">Automatic Brake Intervention Armed</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
+      </div>
 
-        <!-- Chart 2: Telemetry Ping Latency -->
-        <div class="analytic-card">
-          <div class="ac-header">
-            <span class="ac-icon">📶</span>
-            <span class="ac-title">TELEMETRY PING LATENCY</span>
-            <span class="ac-stat font-mono text-accent">18ms avg</span>
+      <!-- 4. View Pane: HOER Running Crew Statutory Duty & Fatigue Monitor -->
+      <div id="cr-view-hoer" class="cr-view-pane hidden">
+        <div class="cr-subview-container">
+          <div class="cr-subview-header">
+            <div class="cr-subview-title-wrap">
+              <span class="cr-subview-icon">👨‍✈️</span>
+              <div>
+                <h2 class="cr-subview-title">HOER 2005 Running Crew Statutory Duty &amp; Fatigue Monitor</h2>
+                <p class="cr-subview-desc font-mono">Ensures strict compliance with Indian Railways Hours of Employment Regulations (HOER 2005) 8.0h continuous running limit.</p>
+              </div>
+            </div>
+            <span class="badge badge-success font-mono">Statutory HOER Rule Compliance: 100%</span>
           </div>
-          <div class="latency-bars" id="chart-latency">
-            <!-- Dynamically populated latency bars -->
+
+          <div class="cr-metric-strip">
+            <div class="cr-stat-card accent-green">
+              <span class="cr-stat-lbl">Active Running Crews</span>
+              <span class="cr-stat-val font-mono text-success">18 Crews On Duty</span>
+              <span class="cr-stat-sub">Loco Pilots, ALPs &amp; Train Guards</span>
+            </div>
+            <div class="cr-stat-card">
+              <span class="cr-stat-lbl">Relief Crews Staged</span>
+              <span class="cr-stat-val font-mono">4 Crews Ready</span>
+              <span class="cr-stat-sub">At Katpadi (KPD) &amp; Jolarpettai (JTJ)</span>
+            </div>
+            <div class="cr-stat-card accent-orange">
+              <span class="cr-stat-lbl">Duty Breach Risk</span>
+              <span class="cr-stat-val font-mono">0 Incidents</span>
+              <span class="cr-stat-sub">Zero 8h shift overshoots recorded</span>
+            </div>
+            <div class="cr-stat-card accent-purple">
+              <span class="cr-stat-lbl">Overtime Penalties Prevented</span>
+              <span class="cr-stat-val font-mono">₹1,70,400 / Day</span>
+              <span class="cr-stat-sub">Avoids ₹14,200 statutory breach penalty</span>
+            </div>
+          </div>
+
+          <div class="hoer-clock-grid">
+            <div class="hoer-crew-card font-mono">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="font-bold text-accent" style="font-size:0.95rem;">🚆 Train #12673 (Cheran SF) • Mainline Crew</span>
+                <span class="badge badge-success">ON SCHEDULE</span>
+              </div>
+              <div>
+                <span style="font-size:0.75rem; color:#94a3b8;">Loco Pilot:</span> <strong>R. Sharma (ID: 842) • Tambaram Depot</strong><br>
+                <span style="font-size:0.75rem; color:#94a3b8;">Asst Loco Pilot:</span> <strong>K. Vignesh (ID: 1054)</strong><br>
+                <span style="font-size:0.75rem; color:#94a3b8;">Train Guard:</span> <strong>P. Murali (ID: 766)</strong>
+              </div>
+              <div style="margin-top:0.5rem;">
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:0.35rem;">
+                  <span>Duty Elapsed: 4.6 hrs</span>
+                  <span class="text-accent font-bold">Max Cap: 8.0 hrs</span>
+                </div>
+                <div class="duty-bar-wrap">
+                  <div class="duty-bar-fill" style="width: 58%; background: #10b981;"></div>
+                </div>
+              </div>
+              <p style="font-size:0.75rem; color:#94a3b8; margin:0;">AI Recommendation: Dynamic relief crew #R-2 dispatched to Katpadi Jn platform 2 for smooth shift handover.</p>
+            </div>
+
+            <div class="hoer-crew-card font-mono">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="font-bold text-accent" style="font-size:0.95rem;">📦 Goods Rake #BOXNHL-5821 • Freight Crew</span>
+                <span class="badge badge-warning">EXTENDED DUTY</span>
+              </div>
+              <div>
+                <span style="font-size:0.75rem; color:#94a3b8;">Loco Pilot:</span> <strong>S. Anand (ID: 611) • Arakkonam Depot</strong><br>
+                <span style="font-size:0.75rem; color:#94a3b8;">Asst Loco Pilot:</span> <strong>M. Suresh (ID: 928)</strong>
+              </div>
+              <div style="margin-top:0.5rem;">
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:0.35rem;">
+                  <span>Duty Elapsed: 6.8 hrs</span>
+                  <span class="text-warning font-bold">Limit: 8.0 hrs</span>
+                </div>
+                <div class="duty-bar-wrap">
+                  <div class="duty-bar-fill" style="width: 85%; background: #f59e0b;"></div>
+                </div>
+              </div>
+              <p style="font-size:0.75rem; color:#94a3b8; margin:0;">AI Recommendation: Diverted into Arakkonam loop line siding. Fresh relief crew boarding from running room.</p>
+            </div>
           </div>
         </div>
+      </div>
 
-        <!-- Chart 3: Fleet Velocity Variance -->
-        <div class="analytic-card">
-          <div class="ac-header">
-            <span class="ac-icon">📈</span>
-            <span class="ac-title">FLEET VELOCITY VARIANCE</span>
-            <span class="ac-stat font-mono text-success">±2.4%</span>
+      <!-- 5. View Pane: AI Dynamic Cleaning Staff & Worker SLA Itinerary Auto-Scheduler -->
+      <div id="cr-view-cleaning" class="cr-view-pane hidden">
+        <div class="cr-subview-container">
+          <div class="cr-subview-header">
+            <div class="cr-subview-title-wrap">
+              <span class="cr-subview-icon">🧼</span>
+              <div>
+                <h2 class="cr-subview-title">AI Dynamic Cleaning Staff &amp; Worker SLA Itinerary Auto-Scheduler</h2>
+                <p class="cr-subview-desc font-mono">Real-time arrival ETA synchronization for station sanitation contractors, watering crews, linen logistics, and OBHS squads.</p>
+              </div>
+            </div>
+            <div class="cr-subview-actions">
+              <span id="cr-worker-live-eta-badge" class="badge badge-accent font-mono">🚆 Live Train #12673 • Dynamic ETA 00:15 IST (+25m)</span>
+            </div>
           </div>
-          <div class="variance-chart" id="chart-variance">
-            <div class="var-zero-line"></div>
-            <!-- Dynamic delta variance indicators -->
+
+          <!-- Hero Metric Strip -->
+          <div class="cr-metric-strip">
+            <div class="cr-stat-card accent-orange">
+              <span class="cr-stat-lbl">AI Dynamic ETA Delay Shift</span>
+              <span class="cr-stat-val font-mono" id="cr-stat-worker-delay">+25 Mins Shift</span>
+              <span class="cr-stat-sub">Shift start automatically pushed forward</span>
+            </div>
+            <div class="cr-stat-card accent-green">
+              <span class="cr-stat-lbl">Contractor Demurrage Saved</span>
+              <span class="cr-stat-val font-mono text-success" id="cr-stat-worker-savings">₹18,450 / Shift</span>
+              <span class="cr-stat-sub font-mono">Zero idle platform waiting fines incurred</span>
+            </div>
+            <div class="cr-stat-card">
+              <span class="cr-stat-lbl">Active Contractor Squads</span>
+              <span class="cr-stat-val font-mono" id="cr-stat-worker-teams">6 Teams Synchronized</span>
+              <span class="cr-stat-sub">Mechanized, watering, linen &amp; bio-toilets</span>
+            </div>
+            <div class="cr-stat-card accent-purple">
+              <span class="cr-stat-lbl">Man-Hours Preserved</span>
+              <span class="cr-stat-val font-mono" id="cr-stat-worker-idle">150 Worker-Hours</span>
+              <span class="cr-stat-sub">Prevented unproductive platform detention</span>
+            </div>
+          </div>
+
+          <!-- Interactive Delay Simulator & Recalibrator Bar -->
+          <div class="cr-delay-sim-bar">
+            <div class="cr-delay-sim-label font-mono">
+              <span>🎮 Delay Simulator &amp; Real-Time AI Recalibrator:</span>
+            </div>
+            <div class="cr-sim-preset-btns">
+              <button class="cr-preset-btn" data-delay="0">0m (On-Time)</button>
+              <button class="cr-preset-btn" data-delay="15">+15m (Minor)</button>
+              <button class="cr-preset-btn active" data-delay="25">+25m (Active ETA)</button>
+              <button class="cr-preset-btn" data-delay="45">+45m (Congestion)</button>
+              <button class="cr-preset-btn" data-delay="70">+70m (Severe Halt)</button>
+            </div>
+            <div class="cr-slider-wrap font-mono">
+              <span style="font-size:0.75rem; color:#94a3b8;">Fine Tune:</span>
+              <input type="range" id="cr-worker-delay-slider" class="cr-delay-slider" min="-15" max="120" value="25" step="5">
+              <span id="cr-worker-delay-val" class="font-mono text-accent font-bold">+25m</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Worker Schedule Comparison Table -->
+          <div class="cr-table-card">
+            <div class="cr-table-card-header">
+              <div class="cr-table-title">
+                <span>📋 Station Turnaround &amp; Cleaning Work Schedule (Katpadi Jn • PF-2)</span>
+              </div>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <button id="cr-btn-broadcast-sms" class="btn btn-cr-outline" style="font-size: 0.72rem; padding: 0.35rem 0.65rem;" title="Simulate SMS/WhatsApp dispatch to contractor supervisors">
+                  📲 Broadcast Duty Alert to Contractors
+                </button>
+              </div>
+            </div>
+            <div style="overflow-x: auto;">
+              <table class="cr-worker-table font-mono">
+                <thead>
+                  <tr>
+                    <th>Contractor / Team Code</th>
+                    <th>Task &amp; Service Category</th>
+                    <th>Platform &amp; Coaches</th>
+                    <th>Baseline Planned Shift</th>
+                    <th>AI-Adjusted Dynamic Shift</th>
+                    <th>Shift Delta</th>
+                    <th>Lead Buffer</th>
+                    <th>SLA Status &amp; Dispatch Alert</th>
+                  </tr>
+                </thead>
+                <tbody id="cr-worker-table-body">
+                  <!-- Dynamically populated by control_room.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Custom Worker Task & Itinerary Input Form -->
+          <div class="cr-add-task-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+              <div>
+                <h4 style="margin:0; font-size:0.95rem; font-weight:700; color:#fff;">➕ Add Custom Worker Task / Contractor Itinerary</h4>
+                <p style="margin:0.25rem 0 0; font-size:0.75rem; color:#94a3b8;">Provide any custom maintenance or cleaning itinerary below. The AI will dynamically synchronize the shift with the train's predicted arrival ETA.</p>
+              </div>
+              <span class="badge badge-info font-mono">Dynamic Recalibration Ready</span>
+            </div>
+            <form id="cr-add-task-form">
+              <div class="cr-form-grid font-mono">
+                <div class="cr-form-field">
+                  <label for="cr-input-team">Contractor / Team Name</label>
+                  <input type="text" id="cr-input-team" class="cr-form-input" placeholder="e.g. Kaveri Sanitization Corp" required>
+                </div>
+                <div class="cr-form-field">
+                  <label for="cr-input-code">Contractor Code / SLA ID</label>
+                  <input type="text" id="cr-input-code" class="cr-form-input" placeholder="e.g. CONTR-SLA-882" required>
+                </div>
+                <div class="cr-form-field">
+                  <label for="cr-input-task">Service / Cleaning Category</label>
+                  <select id="cr-input-task" class="cr-form-input">
+                    <option value="Mechanized Coach Sanitization">Mechanized Coach Sanitization</option>
+                    <option value="Overhead High-Pressure Watering">Overhead High-Pressure Watering</option>
+                    <option value="Bio-Toilet Vacuum Evacuation">Bio-Toilet Vacuum Evacuation</option>
+                    <option value="Premium AC Linen Logistics">Premium AC Linen Logistics</option>
+                    <option value="Platform Track Apron Jet Wash">Platform Track Apron Jet Wash</option>
+                    <option value="On-Board Housekeeping (OBHS)">On-Board Housekeeping (OBHS)</option>
+                    <option value="Wheel Bogie &amp; Brake Pad Check">Wheel Bogie &amp; Brake Pad Check</option>
+                  </select>
+                </div>
+                <div class="cr-form-field">
+                  <label for="cr-input-coaches">Target Platform &amp; Coaches</label>
+                  <input type="text" id="cr-input-coaches" class="cr-form-input" placeholder="e.g. PF-2 • Coaches B1-B8" required>
+                </div>
+                <div class="cr-form-field">
+                  <label for="cr-input-start">Baseline Start Time (HH:MM)</label>
+                  <input type="text" id="cr-input-start" class="cr-form-input" placeholder="e.g. 23:45" pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$" required>
+                </div>
+                <div class="cr-form-field">
+                  <label for="cr-input-duration">Duration (Minutes)</label>
+                  <input type="number" id="cr-input-duration" class="cr-form-input" placeholder="e.g. 30" min="5" max="180" value="30" required>
+                </div>
+                <div class="cr-form-field">
+                  <label for="cr-input-buffer">Lead-in Buffer (Minutes)</label>
+                  <input type="number" id="cr-input-buffer" class="cr-form-input" placeholder="e.g. 15" min="0" max="60" value="15" required>
+                </div>
+              </div>
+              <div class="cr-form-actions">
+                <button type="submit" class="btn btn-cr-warning">🤖 Add &amp; AI-Recalibrate Itinerary</button>
+                <button type="button" id="cr-btn-reset-itinerary" class="btn btn-cr-outline">↺ Reset Default 6 Contractor Teams</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. View Pane: Sensor Telemetry Logs & 100Hz Packet Stream -->
+      <div id="cr-view-telemetry" class="cr-view-pane hidden">
+        <div class="cr-subview-container">
+          <div class="cr-subview-header">
+            <div class="cr-subview-title-wrap">
+              <span class="cr-subview-icon">📊</span>
+              <div>
+                <h2 class="cr-subview-title">Sensor Telemetry Logs &amp; 100Hz Packet Stream</h2>
+                <p class="cr-subview-desc font-mono">Direct feed from locomotive IoT telemetry units, digital axle counters, OHE transducers, and wayside Kavach TCAS balises.</p>
+              </div>
+            </div>
+            <span class="badge badge-info font-mono">NTES 100Hz Packet Socket Active</span>
+          </div>
+
+          <div class="cr-table-card">
+            <div class="cr-table-card-header">
+              <span class="cr-table-title">📡 Real-Time Telemetry Stream Ingestion (Hex Packet Logs)</span>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="cr-worker-table font-mono" style="font-size:0.75rem;">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Source Identifier</th>
+                    <th>Subsystem</th>
+                    <th>Telemetry Payload</th>
+                    <th>Signal Latency</th>
+                    <th>Parity &amp; CRC</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="text-accent">18:59:12.450</td>
+                    <td>LOCO-WAP7-30452</td>
+                    <td>Traction &amp; Braking</td>
+                    <td>Speed=105kmh; Volt=25.2kV; BrakePress=5.0bar; Pantograph=UP</td>
+                    <td>14ms</td>
+                    <td><span class="text-success">CRC-32 PASS</span></td>
+                  </tr>
+                  <tr>
+                    <td class="text-accent">18:59:12.510</td>
+                    <td>KAVACH-TCAS-BALISE</td>
+                    <td>ATP Supervision</td>
+                    <td>RFID=KM-214-UP; MA=4200m; SBD=680m; SPAD=0.00</td>
+                    <td>18ms</td>
+                    <td><span class="text-success">CRC-32 PASS</span></td>
+                  </tr>
+                  <tr>
+                    <td class="text-accent">18:59:12.605</td>
+                    <td>AXLE-COUNTER-412</td>
+                    <td>Track Occupancy</td>
+                    <td>Section=BLK-412; InCount=96; OutCount=96; Relay=0x01</td>
+                    <td>11ms</td>
+                    <td><span class="text-success">CRC-32 PASS</span></td>
+                  </tr>
+                  <tr>
+                    <td class="text-accent">18:59:12.720</td>
+                    <td>OHE-FEEDER-JTJ</td>
+                    <td>Traction Power</td>
+                    <td>LineAmps=380A; PowerFactor=0.98; Frequency=50.02Hz</td>
+                    <td>22ms</td>
+                    <td><span class="text-success">CRC-32 PASS</span></td>
+                  </tr>
+                  <tr>
+                    <td class="text-accent">18:59:12.835</td>
+                    <td>GPS-NMEA-STREAM</td>
+                    <td>Satellite Navigation</td>
+                    <td>GPGGA,12.9696,N,079.1367,E,Fix=1,Sats=14,HDOP=0.8</td>
+                    <td>19ms</td>
+                    <td><span class="text-success">CRC-32 PASS</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

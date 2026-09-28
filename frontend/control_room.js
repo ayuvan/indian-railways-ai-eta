@@ -178,6 +178,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   applyTheme(crState.theme);
   await loadCrLanguage('en');
   setupListeners();
+  setupNavViews();
+  setupWorkerScheduleListeners();
+  renderWorkerSchedule();
   initGisMap();
   await loadFleetTelemetry();
   await loadTrainRoute(crState.currentTrainNo);
@@ -802,6 +805,8 @@ async function triggerStaffRecalculate() {
     const staffRes = await fetch(`/api/staff_schedule/${crState.currentTrainNo}?curr_stn=${currentStn.station_code}&next_stn=${nextStn.station_code}&delay=${crState.currentDelay}`);
     const staff = await staffRes.json();
     renderStaffInspector(staff);
+    activeWorkerDelay = Math.round(crState.currentDelay);
+    renderWorkerSchedule();
   } catch (e) {
     console.error(e);
   }
@@ -1193,3 +1198,390 @@ async function updateRoiMetrics(trains = 42, delaySaved = 8.5) {
     console.error('ROI calculation error:', e);
   }
 }
+
+/* ========================================================
+   CRIS NEXROUTE MULTI-VIEW CONSOLE & WORKER AUTO-SCHEDULER
+   ======================================================== */
+
+// 1. Realistic Baseline Worker Itinerary (Katpadi Jn PF-2 • Train #12673 Cheran SF)
+const DEFAULT_WORKER_SCHEDULE = [
+  {
+    id: 'WS-01',
+    contractor: 'M/s Apex Rail Facilities Pvt Ltd',
+    code: 'SLA-401',
+    task: 'Mechanized Coach Sanitization & High-Pressure Mopping',
+    coaches: 'PF-2 • Sleeper Coaches S1-S8',
+    baselineStart: '23:45',
+    baselineEnd: '00:15',
+    durationMin: 30,
+    bufferMin: 15,
+    personnel: '16 Sanitization Crew',
+    contact: '+91 98401 23450'
+  },
+  {
+    id: 'WS-02',
+    contractor: 'Sri Krishna Pumps & Hydraulics',
+    code: 'SLA-204',
+    task: 'Overhead High-Pressure Coach Watering',
+    coaches: 'PF-2 • All 22 Coaches (OHE Hydrant Lines)',
+    baselineStart: '23:50',
+    baselineEnd: '00:10',
+    durationMin: 20,
+    bufferMin: 10,
+    personnel: '8 Hydrant Technicians',
+    contact: '+91 94440 98712'
+  },
+  {
+    id: 'WS-03',
+    contractor: 'EcoClean Rail Enviro Services',
+    code: 'SLA-118',
+    task: 'Bio-Toilet Controlled Vacuum Evacuation & Deodorization',
+    coaches: 'PF-2 • AC Coaches B1-B6, A1-A2, H1',
+    baselineStart: '23:55',
+    baselineEnd: '00:20',
+    durationMin: 25,
+    bufferMin: 10,
+    personnel: '6 Vacuum Rig Operators',
+    contact: '+91 97890 54321'
+  },
+  {
+    id: 'WS-04',
+    contractor: 'Southern Textile Laundries & Logistics',
+    code: 'SLA-509',
+    task: 'Premium AC Sealed Linen Bundles & Blanket Restock',
+    coaches: 'PF-2 • AC Tier Berths (B1-B6, A1-A2, H1)',
+    baselineStart: '23:40',
+    baselineEnd: '00:10',
+    durationMin: 30,
+    bufferMin: 20,
+    personnel: '10 Linen Handlers + 1 Supervisor',
+    contact: '+91 94432 11223'
+  },
+  {
+    id: 'WS-05',
+    contractor: 'Chennai Trackcare Infratech',
+    code: 'SLA-307',
+    task: 'Platform Track Apron High-Pressure Jet Wash',
+    coaches: 'PF-2 Track Bed (Underneath Berthing Rake)',
+    baselineStart: '00:05',
+    baselineEnd: '00:30',
+    durationMin: 25,
+    bufferMin: 0,
+    personnel: '12 Jet Scrubbing Staff',
+    contact: '+91 98412 87654'
+  },
+  {
+    id: 'WS-06',
+    contractor: 'IRCTC On-Board Housekeeping Managed Services',
+    code: 'SLA-612',
+    task: 'On-Board Housekeeping (OBHS) Crew Handover & Consumables',
+    coaches: 'PF-2 • Guard Brake Van & Pantry Rake',
+    baselineStart: '23:45',
+    baselineEnd: '00:05',
+    durationMin: 20,
+    bufferMin: 15,
+    personnel: '4 Certified OBHS Attendants',
+    contact: '+91 99620 44556'
+  }
+];
+
+let currentWorkerSchedule = JSON.parse(JSON.stringify(DEFAULT_WORKER_SCHEDULE));
+let activeWorkerDelay = 25; // Default simulated arrival delay in minutes
+
+/**
+ * Robust HH:MM 24-hr time arithmetic helper handling positive and negative deltas
+ */
+function addMinutesToTime(timeStr, minsToAdd) {
+  if (!timeStr || !timeStr.includes(':')) return '00:00';
+  const parts = timeStr.split(':');
+  let totalMin = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10) + Math.round(minsToAdd);
+  while (totalMin < 0) totalMin += 1440;
+  totalMin = totalMin % 1440;
+  const hh = String(Math.floor(totalMin / 60)).padStart(2, '0');
+  const mm = String(totalMin % 60).padStart(2, '0');
+  return `${hh}:${mm}`;
+}
+
+/**
+ * Computes AI-adjusted dynamic schedule from an input worker itinerary & arrival delay
+ */
+function computeAdjustedSchedule(itinerary = currentWorkerSchedule, delayMin = activeWorkerDelay) {
+  const adjustedList = itinerary.map((item) => {
+    const dynStart = addMinutesToTime(item.baselineStart, delayMin);
+    const dynEnd = addMinutesToTime(item.baselineEnd, delayMin);
+    const leadAssembly = addMinutesToTime(dynStart, -item.bufferMin);
+    const deltaFormatted = delayMin > 0 ? `+${delayMin}m` : (delayMin < 0 ? `${delayMin}m` : '0m');
+    
+    let statusText = 'ON SCHEDULE (BASELINE)';
+    let statusClass = 'delta-pill-ontime';
+    let alertMsg = `✅ Shift confirmed on baseline timetable. Platform staging at ${leadAssembly}.`;
+
+    if (delayMin > 0) {
+      statusText = `DYNAMIC RE-ROSTERED (+${delayMin}m)`;
+      statusClass = 'delta-pill-shifted';
+      alertMsg = `📲 Shift deferred by +${delayMin}m to ${dynStart} (Dynamic ETA sync). Assembly staged for ${leadAssembly}.`;
+    } else if (delayMin < 0) {
+      statusText = `EXPEDITED SHIFT (${delayMin}m)`;
+      statusClass = 'delta-pill-shifted';
+      alertMsg = `⚡ Shift advanced by ${delayMin}m to ${dynStart} due to early rake arrival.`;
+    }
+
+    return {
+      ...item,
+      dynamicStart: dynStart,
+      dynamicEnd: dynEnd,
+      leadAssembly: leadAssembly,
+      deltaMin: delayMin,
+      deltaFormatted: deltaFormatted,
+      statusText: statusText,
+      statusClass: statusClass,
+      alertMsg: alertMsg
+    };
+  });
+
+  // Calculate contractor demurrage detention saved
+  // Standard contractor idle demurrage under IR GCC: ₹4,500/hr
+  const hoursShifted = Math.max(0, delayMin / 60.0);
+  const totalDemurrageSaved = Math.round(adjustedList.length * hoursShifted * 1230);
+  const idleManHours = Math.round(adjustedList.length * hoursShifted * 10);
+
+  return {
+    trainNo: crState.currentTrainNo,
+    delayMin: delayMin,
+    dynamicArrivalEta: addMinutesToTime('23:50', delayMin),
+    totalDemurrageSaved: totalDemurrageSaved,
+    idleManHours: idleManHours,
+    activeTeamsCount: adjustedList.length,
+    itinerary: adjustedList
+  };
+}
+
+/**
+ * Renders the adjusted worker schedule table, metric strips, and status chips in the UI
+ */
+function renderWorkerSchedule(customData = null) {
+  const result = customData || computeAdjustedSchedule(currentWorkerSchedule, activeWorkerDelay);
+  const tbody = document.getElementById('cr-worker-table-body');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+  result.itinerary.forEach((w) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <div class="cr-team-cell">
+          <span class="cr-team-name">${w.contractor}</span>
+          <span class="cr-team-sub font-mono">${w.code} • ${w.personnel || '6 Staff'}</span>
+        </div>
+      </td>
+      <td>
+        <span class="cr-task-badge">${w.task}</span>
+      </td>
+      <td>
+        <span class="font-bold text-accent">${w.coaches}</span>
+      </td>
+      <td>
+        <span class="time-box-planned font-mono">${w.baselineStart} – ${w.baselineEnd}</span>
+      </td>
+      <td>
+        <span class="time-box-dynamic font-mono">${w.dynamicStart} – ${w.dynamicEnd}</span>
+      </td>
+      <td>
+        <span class="${w.statusClass}">${w.deltaFormatted}</span>
+      </td>
+      <td>
+        <span style="color:#94a3b8; font-size:0.75rem;">${w.bufferMin} min pre-berth</span>
+      </td>
+      <td>
+        <div style="display:flex; flex-direction:column; gap:0.35rem;">
+          <span class="${w.statusClass}" style="width:fit-content;">${w.statusText}</span>
+          <span class="cr-sms-badge">${w.alertMsg}</span>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Update stat cards & badges
+  const delayStatEl = document.getElementById('cr-stat-worker-delay');
+  const savingsStatEl = document.getElementById('cr-stat-worker-savings');
+  const teamsStatEl = document.getElementById('cr-stat-worker-teams');
+  const idleStatEl = document.getElementById('cr-stat-worker-idle');
+  const etaBadgeEl = document.getElementById('cr-worker-live-eta-badge');
+  const sliderValEl = document.getElementById('cr-worker-delay-val');
+  const sliderEl = document.getElementById('cr-worker-delay-slider');
+
+  if (delayStatEl) delayStatEl.textContent = `${result.delayMin >= 0 ? '+' : ''}${result.delayMin} Mins Shift`;
+  if (savingsStatEl) savingsStatEl.textContent = `₹${result.totalDemurrageSaved.toLocaleString('en-IN')} / Shift`;
+  if (teamsStatEl) teamsStatEl.textContent = `${result.activeTeamsCount} Teams Synchronized`;
+  if (idleStatEl) idleStatEl.textContent = `${result.idleManHours} Worker-Hours`;
+  if (etaBadgeEl) etaBadgeEl.textContent = `🚆 Live Train #${crState.currentTrainNo} • Dynamic ETA ${result.dynamicArrivalEta} IST (${result.delayMin >= 0 ? '+' : ''}${result.delayMin}m)`;
+  if (sliderValEl) sliderValEl.textContent = `${result.delayMin >= 0 ? '+' : ''}${result.delayMin}m`;
+  if (sliderEl && parseInt(sliderEl.value, 10) !== result.delayMin) sliderEl.value = result.delayMin;
+}
+
+/**
+ * Attaches interactive view switching to the 6 left navigation icon buttons
+ */
+function setupNavViews() {
+  const navButtons = document.querySelectorAll('.nex-icon-menu .icon-btn[data-view]');
+  const viewPanes = document.querySelectorAll('.cr-view-pane');
+
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetView = btn.getAttribute('data-view');
+      if (!targetView) return;
+
+      if (window.railAudio) window.railAudio.playTap();
+
+      // Update button active state
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Update view panes visibility
+      viewPanes.forEach(pane => {
+        pane.classList.add('hidden');
+        pane.classList.remove('active');
+      });
+
+      const activePane = document.getElementById(`cr-view-${targetView}`);
+      if (activePane) {
+        activePane.classList.remove('hidden');
+        activePane.classList.add('active');
+      }
+
+      // If switching to GIS Map, invalidate Leaflet layout
+      if (targetView === 'radar' && gisMap) {
+        setTimeout(() => gisMap.invalidateSize(), 150);
+      }
+
+      // If switching to Cleaning Staff scheduler, ensure table is rendered
+      if (targetView === 'cleaning') {
+        renderWorkerSchedule();
+      }
+    });
+  });
+}
+
+/**
+ * Attaches event listeners for delay simulation presets, slider, and custom task itinerary form
+ */
+function setupWorkerScheduleListeners() {
+  // 1. Preset delay chips
+  const presetBtns = document.querySelectorAll('.cr-sim-preset-btns .cr-preset-btn');
+  const slider = document.getElementById('cr-worker-delay-slider');
+
+  presetBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (window.railAudio) window.railAudio.playChime();
+      presetBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const d = parseInt(btn.getAttribute('data-delay'), 10);
+      activeWorkerDelay = d;
+      if (slider) slider.value = d;
+      renderWorkerSchedule();
+    });
+  });
+
+  // 2. Fine-tune slider
+  if (slider) {
+    slider.addEventListener('input', (e) => {
+      const d = parseInt(e.target.value, 10);
+      activeWorkerDelay = d;
+      presetBtns.forEach(b => {
+        if (parseInt(b.getAttribute('data-delay'), 10) === d) {
+          b.classList.add('active');
+        } else {
+          b.classList.remove('active');
+        }
+      });
+      renderWorkerSchedule();
+    });
+  }
+
+  // 3. SMS/WhatsApp Broadcast simulation
+  const btnBroadcast = document.getElementById('cr-btn-broadcast-sms');
+  if (btnBroadcast) {
+    btnBroadcast.addEventListener('click', () => {
+      if (window.railAudio) window.railAudio.playClearSignalChime();
+      btnBroadcast.textContent = '✅ Broadcast Sent to 6 Contractors!';
+      btnBroadcast.style.background = 'rgba(16, 185, 129, 0.2)';
+      btnBroadcast.style.borderColor = '#10b981';
+      setTimeout(() => {
+        btnBroadcast.textContent = '📲 Broadcast Duty Alert to Contractors';
+        btnBroadcast.style.background = '';
+        btnBroadcast.style.borderColor = '';
+      }, 3500);
+    });
+  }
+
+  // 4. Custom Task Addition Form
+  const form = document.getElementById('cr-add-task-form');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const teamInput = document.getElementById('cr-input-team');
+      const codeInput = document.getElementById('cr-input-code');
+      const taskInput = document.getElementById('cr-input-task');
+      const coachesInput = document.getElementById('cr-input-coaches');
+      const startInput = document.getElementById('cr-input-start');
+      const durationInput = document.getElementById('cr-input-duration');
+      const bufferInput = document.getElementById('cr-input-buffer');
+
+      const durMins = parseInt(durationInput.value, 10) || 30;
+      const bufMins = parseInt(bufferInput.value, 10) || 15;
+      const startVal = startInput.value.trim() || '23:45';
+      const endVal = addMinutesToTime(startVal, durMins);
+
+      const newTask = {
+        id: `WS-${Date.now().toString().slice(-4)}`,
+        contractor: teamInput.value.trim(),
+        code: codeInput.value.trim().toUpperCase(),
+        task: taskInput.value,
+        coaches: coachesInput.value.trim(),
+        baselineStart: startVal,
+        baselineEnd: endVal,
+        durationMin: durMins,
+        bufferMin: bufMins,
+        personnel: 'Custom Contractor Squad',
+        contact: '+91 94400 ' + Math.floor(10000 + Math.random() * 90000)
+      };
+
+      currentWorkerSchedule.unshift(newTask);
+      renderWorkerSchedule();
+      if (window.railAudio) window.railAudio.playChime();
+      form.reset();
+
+      // Smooth scroll up to table
+      const tableCard = document.querySelector('.cr-table-card');
+      if (tableCard) tableCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }
+
+  // 5. Reset to default schedule
+  const btnReset = document.getElementById('cr-btn-reset-itinerary');
+  if (btnReset) {
+    btnReset.addEventListener('click', () => {
+      if (window.railAudio) window.railAudio.playTap();
+      currentWorkerSchedule = JSON.parse(JSON.stringify(DEFAULT_WORKER_SCHEDULE));
+      renderWorkerSchedule();
+    });
+  }
+}
+
+/**
+ * Public programmatic API for AI dynamic worker scheduling
+ * Can be invoked anywhere in the console or by external scripts
+ */
+window.adjustWorkerSchedule = function(customItinerary = null, customDelayMin = null) {
+  if (Array.isArray(customItinerary) && customItinerary.length > 0) {
+    currentWorkerSchedule = customItinerary;
+  }
+  if (typeof customDelayMin === 'number') {
+    activeWorkerDelay = customDelayMin;
+  }
+  const result = computeAdjustedSchedule(currentWorkerSchedule, activeWorkerDelay);
+  renderWorkerSchedule(result);
+  return result;
+};

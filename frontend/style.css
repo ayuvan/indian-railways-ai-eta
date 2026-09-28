@@ -4315,5 +4315,458 @@ body {
   padding-top: 0.6rem;
 }
 
+/* ========================================================
+   CRIS Nexroute Multi-View Console & Worker Auto-Scheduler
+   ======================================================== */
+
+/* Left Nav Strip Interactive State */
+.nex-nav-strip .icon-btn {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 1.35rem;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.65;
+}
+
+.nex-nav-strip .icon-btn:hover {
+  opacity: 1;
+  background: rgba(249, 115, 22, 0.12);
+  border-color: rgba(249, 115, 22, 0.3);
+  transform: scale(1.08);
+}
+
+.nex-nav-strip .icon-btn.active {
+  opacity: 1;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(234, 88, 12, 0.08));
+  border: 1px solid #f97316;
+  box-shadow: 0 0 16px rgba(249, 115, 22, 0.35);
+  transform: scale(1.1);
+}
+
+.nex-nav-strip .icon-btn.active::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 8px;
+  bottom: 8px;
+  width: 3.5px;
+  background: #f97316;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 0 0 10px #f97316;
+}
+
+/* Tooltip on Left Nav */
+.nex-nav-strip .icon-btn::after {
+  content: attr(title);
+  position: absolute;
+  left: 54px;
+  top: 50%;
+  transform: translateY(-50%) translateX(-6px);
+  background: #0f172a;
+  color: #f8fafc;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.18s ease-out;
+  z-index: 100;
+}
+
+.nex-nav-strip .icon-btn:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Center Stage View Panes */
+.cr-view-pane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  animation: crFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cr-view-pane.hidden {
+  display: none !important;
+}
+
+@keyframes crFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Common Control Room Sub-Views Styling */
+.cr-subview-container {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.cr-subview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #162032;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.cr-subview-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.cr-subview-icon {
+  font-size: 2rem;
+  padding: 0.6rem;
+  background: rgba(249, 115, 22, 0.1);
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  border-radius: 12px;
+}
+
+.cr-subview-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+
+.cr-subview-desc {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
+/* Hero Metric Strip in Subviews */
+.cr-metric-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.cr-stat-card {
+  background: #080d1a;
+  border: 1px solid #162032;
+  border-radius: 10px;
+  padding: 0.85rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.cr-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--c-accent, #3b82f6);
+}
+
+.cr-stat-card.accent-orange::before { background: #f97316; }
+.cr-stat-card.accent-green::before { background: #10b981; }
+.cr-stat-card.accent-purple::before { background: #8b5cf6; }
+
+.cr-stat-lbl {
+  font-size: 0.72rem;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.cr-stat-val {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.cr-stat-sub {
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+/* Interactive Delay Simulator Bar */
+.cr-delay-sim-bar {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.4), rgba(15, 23, 42, 0.6));
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.cr-delay-sim-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.cr-sim-preset-btns {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.cr-preset-btn {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cr-preset-btn:hover {
+  background: #1e293b;
+  border-color: #64748b;
+  color: #fff;
+}
+
+.cr-preset-btn.active {
+  background: #f97316;
+  border-color: #ea580c;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+}
+
+.cr-slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 220px;
+}
+
+.cr-delay-slider {
+  flex: 1;
+  accent-color: #f97316;
+  cursor: pointer;
+}
+
+/* Dynamic Schedule Comparison Table */
+.cr-table-card {
+  background: #080d1a;
+  border: 1px solid #162032;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.cr-table-card-header {
+  padding: 0.85rem 1.25rem;
+  background: #060b17;
+  border-bottom: 1px solid #162032;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.cr-table-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cr-worker-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.cr-worker-table th {
+  background: #0a1120;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #162032;
+}
+
+.cr-worker-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #121a2a;
+  color: #e2e8f0;
+  vertical-align: middle;
+}
+
+.cr-worker-table tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.cr-team-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.cr-team-name {
+  font-weight: 700;
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.cr-team-sub {
+  font-size: 0.7rem;
+  color: #64748b;
+}
+
+.cr-task-badge {
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.time-box-planned {
+  color: #94a3b8;
+}
+
+.time-box-dynamic {
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.delta-pill-shifted {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid #f59e0b;
+  color: #fbbf24;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.delta-pill-ontime {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid #10b981;
+  color: #34d399;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.cr-sms-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Custom Schedule Input Form Card */
+.cr-add-task-card {
+  background: #080d1a;
+  border: 1px solid #162032;
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.cr-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.85rem;
+  margin-top: 0.85rem;
+}
+
+.cr-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.cr-form-field label {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.cr-form-input {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #fff;
+  padding: 0.45rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.cr-form-input:focus {
+  border-color: #f97316;
+}
+
+.cr-form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* HOER Duty Clock Card */
+.hoer-clock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.hoer-crew-card {
+  background: #080d1a;
+  border: 1px solid #162032;
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+
 
 
