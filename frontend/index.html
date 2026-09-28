@@ -18,12 +18,12 @@
       <div class="portal-tabs">
         <a href="/" class="portal-tab active">
           <span class="portal-tab-icon">🚆</span>
-          <span>Passenger Mobile App</span>
+          <span id="txt-portal-passenger">Passenger Mobile App</span>
           <span class="tab-pill">Active</span>
         </a>
         <a href="/control-room" class="portal-tab">
           <span class="portal-tab-icon">🎛️</span>
-          <span>Control Room Dashboard</span>
+          <span id="txt-portal-control">Control Room Dashboard</span>
           <span class="tab-pill staff-pill">Rail Staff</span>
         </a>
       </div>
@@ -41,7 +41,7 @@
         <!-- SIH Hackathon Jury Evaluation Mode Button -->
         <button id="btn-sih-jury-modal" class="btn-sih-jury-pill" title="Open SIH Hackathon Jury Evaluation & Benchmarks Mode">
           <span>🏆</span>
-          <span>SIH Jury Mode</span>
+          <span id="txt-sih-jury-btn">SIH Jury Mode</span>
         </button>
 
         <div class="ntes-live-badge">
@@ -52,7 +52,7 @@
         <!-- Cabin Sound FX & Audio Chime Toggle -->
         <button class="audio-toggle-btn btn-audio-pill" title="Toggle Station Chimes & Cabin Audio">
           <span>🔊</span>
-          <span>Audio ON</span>
+          <span id="txt-audio-btn">Audio ON</span>
         </button>
 
         <div class="lang-selector-wrapper">
@@ -83,7 +83,7 @@
       <div class="header-right-meta">
         <div class="accuracy-badge">
           <span class="acc-val">98.6%</span>
-          <span class="acc-lbl">ML Precision (±15m)</span>
+          <span class="acc-lbl" id="txt-ml-precision-badge">ML Precision (±15m)</span>
         </div>
       </div>
     </div>
@@ -111,7 +111,7 @@
 
       <!-- Quick Preset Train Chips -->
       <div class="quick-trains-bar">
-        <span class="quick-title">Popular Trains:</span>
+        <span id="txt-popular-title" class="quick-title">Popular Trains:</span>
         <button class="chip chip-active" data-train="12673">12673 • Cheran Express (MAS ➔ CBE)</button>
         <button class="chip" data-train="12681">12681 • Kovai Superfast (MAS ➔ CBE)</button>
         <button class="chip" data-train="10103">10103 • Mandovi Express (CSMT ➔ MAO)</button>
@@ -122,8 +122,8 @@
       <!-- Flagship Corridors Carousel (inspired by Home page 1 & 2) -->
       <div class="flagship-corridors-section">
         <div class="fc-header">
-          <span class="fc-title">⚡ Flagship Express Corridors</span>
-          <span class="fc-sub font-mono">Live Telemetry Feeds Available</span>
+          <span id="txt-fc-title" class="fc-title">⚡ Flagship Express Corridors</span>
+          <span id="txt-fc-sub" class="fc-sub font-mono">Live Telemetry Feeds Available</span>
         </div>
         <div class="fc-grid">
           <!-- Card 1: Vande Bharat Express -->
@@ -188,12 +188,12 @@
 
     <!-- Horizontal Date Selector (inspired by UI Design Ideas Home page 2) -->
     <div class="date-strip-container">
-      <div class="date-strip-label">Journey Date:</div>
+      <div id="txt-journey-date-label" class="date-strip-label">Journey Date:</div>
       <div class="date-strip" id="date-strip">
         <div class="date-pill"><span class="d-day">Sun</span><span class="d-num">14</span></div>
         <div class="date-pill"><span class="d-day">Mon</span><span class="d-num">15</span></div>
         <div class="date-pill"><span class="d-day">Tue</span><span class="d-num">16</span></div>
-        <div class="date-pill active"><span class="d-day">Today</span><span class="d-num">17</span></div>
+        <div class="date-pill active"><span id="txt-date-today" class="d-day">Today</span><span class="d-num">17</span></div>
         <div class="date-pill"><span class="d-day">Thu</span><span class="d-num">18</span></div>
         <div class="date-pill"><span class="d-day">Fri</span><span class="d-num">19</span></div>
         <div class="date-pill"><span class="d-day">Sat</span><span class="d-num">20</span></div>
@@ -207,7 +207,7 @@
       <div class="bp-top-ticket">
         <div class="bp-top-grid">
           <div class="bp-station-block">
-            <span class="bp-sub-label">DEPARTURE</span>
+            <span id="txt-bp-dep-label" class="bp-sub-label">DEPARTURE</span>
             <span class="bp-code" id="bp-origin-code">MAS</span>
             <span class="bp-city" id="bp-origin-city">Chennai Central</span>
             <span class="bp-time" id="bp-origin-time">Dep 22:00</span>
@@ -236,7 +236,7 @@
           </div>
 
           <div class="bp-station-block text-right">
-            <span class="bp-sub-label">ARRIVAL</span>
+            <span id="txt-bp-arr-label" class="bp-sub-label">ARRIVAL</span>
             <span class="bp-code text-accent" id="bp-dest-code">CBE</span>
             <span class="bp-city" id="bp-dest-city">Coimbatore Jn</span>
             <span class="bp-time text-accent font-bold" id="bp-dest-time">Dynamic ETA 06:25</span>
@@ -254,7 +254,7 @@
 
           <div class="bp-metrics-cluster">
             <div class="bp-metric-box">
-              <span class="bpm-label">Estimated Platform</span>
+              <span id="txt-bp-platform-label" class="bpm-label">Estimated Platform</span>
               <span id="disp-live-platform-top" class="bpm-val text-success">PF-2</span>
             </div>
             <div class="bp-metric-box">
@@ -262,11 +262,11 @@
               <span id="disp-current-delay" class="bpm-val text-warning">25 min Late</span>
             </div>
             <div class="bp-metric-box">
-              <span class="bpm-label">Live GPS Speed</span>
+              <span id="txt-bp-speed-label" class="bpm-label">Live GPS Speed</span>
               <span id="disp-live-speed" class="bpm-val text-primary">105 km/h</span>
             </div>
             <div class="bp-metric-box">
-              <span class="bpm-label">Signal Ahead</span>
+              <span id="txt-bp-signal-label" class="bpm-label">Signal Ahead</span>
               <span id="disp-live-signal" class="bpm-val text-success">GREEN (MPS)</span>
             </div>
           </div>
@@ -414,10 +414,10 @@
 
           <div class="barcode-action-group">
             <button id="btn-explain-eta" class="btn btn-explain-xai" title="Explain AI Feature Attribution Factors (SHAP)">
-              <span>🧠</span> <span>Explain My ETA</span>
+              <span>🧠</span> <span id="txt-btn-explain">Explain My ETA</span>
             </button>
             <button id="btn-toggle-map" class="btn btn-virtual-map">
-              <span>🗺️ View Virtual Train Track Map</span>
+              <span id="txt-btn-map">🗺️ View Virtual Train Track Map</span>
             </button>
           </div>
         </div>
@@ -445,8 +445,8 @@
       <!-- "What-If" Simulation Drawer -->
       <div class="simulation-drawer">
         <div class="sim-header">
-          <span class="sim-title">⚡ Interactive "What-If" Scenario Simulator</span>
-          <span class="sim-note">Recalculate dynamic arrival times based on real-time track conditions</span>
+          <span id="txt-sim-title" class="sim-title">⚡ Interactive "What-If" Scenario Simulator</span>
+          <span id="txt-sim-note" class="sim-note">Recalculate dynamic arrival times based on real-time track conditions</span>
         </div>
 
         <div class="sim-controls-grid sim-controls-grid-rich">
@@ -466,9 +466,9 @@
           <div class="sim-input-group">
             <label id="txt-weather-label" for="sim-weather-select">🌦️ Weather Condition:</label>
             <select id="sim-weather-select" class="form-select">
-              <option value="Clear">☀️ Clear (Normal MPS 110 km/h)</option>
-              <option value="Heavy Rain">🌧️ Heavy Monsoon Rain (-10 km/h)</option>
-              <option value="Dense Fog">🌫️ Dense Fog / FogPass (-30 km/h)</option>
+              <option value="Clear" id="opt-weather-clear">☀️ Clear (Normal MPS 110 km/h)</option>
+              <option value="Heavy Rain" id="opt-weather-rain">🌧️ Heavy Monsoon Rain (-10 km/h)</option>
+              <option value="Dense Fog" id="opt-weather-fog">🌫️ Dense Fog / FogPass (-30 km/h)</option>
             </select>
           </div>
 
@@ -476,15 +476,15 @@
           <div class="sim-input-group">
             <label id="txt-congestion-label" for="sim-congestion-select">🚦 Track Headway:</label>
             <select id="sim-congestion-select" class="form-select">
-              <option value="Normal">🟢 Normal Headway</option>
-              <option value="High">🔴 High Bottleneck (Suburban Junction Hold)</option>
-              <option value="Low">⚡ Clear High-Speed Corridor</option>
+              <option value="Normal" id="opt-congestion-normal">🟢 Normal Headway</option>
+              <option value="High" id="opt-congestion-high">🔴 High Bottleneck (Suburban Junction Hold)</option>
+              <option value="Low" id="opt-congestion-low">⚡ Clear High-Speed Corridor</option>
             </select>
           </div>
 
           <!-- Parameter 5: Day of the Week -->
           <div class="sim-input-group">
-            <label for="sim-day-select">📅 Day of the Week:</label>
+            <label id="txt-day-label" for="sim-day-select">📅 Day of the Week:</label>
             <select id="sim-day-select" class="form-select">
               <option value="Mid-Week">Regular Mid-Week (Standard Traffic)</option>
               <option value="Monday Rush">💼 Monday Morning Commuter Rush (+4m)</option>
@@ -495,7 +495,7 @@
 
           <!-- Parameter 6: Occasion / Special Public Event -->
           <div class="sim-input-group">
-            <label for="sim-occasion-select">🎪 Occasion / Public Event:</label>
+            <label id="txt-occasion-label" for="sim-occasion-select">🎪 Occasion / Public Event:</label>
             <select id="sim-occasion-select" class="form-select">
               <option value="None">None (Standard Operating Day)</option>
               <option value="Festival Rush (Diwali/Chhath/Pongal)">🪔 Major Festival (Diwali/Chhath/Pongal) (+14m Dwell)</option>
@@ -507,7 +507,7 @@
 
           <!-- Parameter 7: Civil & Social Disruption -->
           <div class="sim-input-group">
-            <label for="sim-civil-select">📢 Civil & Public Disruption:</label>
+            <label id="txt-civil-label" for="sim-civil-select">📢 Civil & Public Disruption:</label>
             <select id="sim-civil-select" class="form-select">
               <option value="None">None (Nominal Peace & Order)</option>
               <option value="Rail Roko / Track Blockade Protest">⚠️ Rail Roko / Track Blockade Protest (+45m Hold)</option>
@@ -518,7 +518,7 @@
 
           <!-- Parameter 8: Technical Malfunctions -->
           <div class="sim-input-group">
-            <label for="sim-tech-select">🔧 Technical & Track Defect:</label>
+            <label id="txt-tech-label" for="sim-tech-select">🔧 Technical & Track Defect:</label>
             <select id="sim-tech-select" class="form-select">
               <option value="None">None (All Systems Nominal)</option>
               <option value="OHE Power Tripping / Wire Break">⚡ OHE Power Tripping / Wire Break (+35m Neutral Zone)</option>
@@ -529,7 +529,7 @@
 
           <!-- Parameter 9: Timetable & Precedence Conflict -->
           <div class="sim-input-group">
-            <label for="sim-timetable-select">⏱️ Timetable & Priority Clash:</label>
+            <label id="txt-priority-label" for="sim-timetable-select">⏱️ Timetable & Priority Clash:</label>
             <select id="sim-timetable-select" class="form-select">
               <option value="None">None (Standard Schedule Adherence)</option>
               <option value="VIP / Vande Bharat Rajdhani Overtake">👑 Loop Precedence Hold for Vande Bharat / Rajdhani (+18m)</option>
@@ -549,12 +549,20 @@
         </div>
 
         <div class="sim-buttons-row">
-          <button id="btn-recalculate" class="btn btn-action">⚡ Recalculate Dynamic ETA</button>
-          <button id="btn-step-sim" class="btn btn-secondary">▶️ Advance Next Section</button>
-          <button id="btn-inject-delay" class="btn btn-warning">⚠️ Inject 20m Signal Halt</button>
-          <button id="btn-reset-sim" class="btn btn-outline">🔄 Reset Journey</button>
+          <button id="btn-recalculate" class="btn btn-action">
+            <span id="txt-btn-recalculate">⚡ Recalculate Dynamic ETA</span>
+          </button>
+          <button id="btn-step-sim" class="btn btn-secondary">
+            <span id="txt-btn-step-sim">▶️ Advance Next Section</span>
+          </button>
+          <button id="btn-inject-delay" class="btn btn-warning">
+            <span id="txt-btn-inject-delay">⚠️ Inject 20m Signal Halt</span>
+          </button>
+          <button id="btn-reset-sim" class="btn btn-outline">
+            <span id="txt-btn-reset-sim">🔄 Reset Journey</span>
+          </button>
           <button id="btn-toggle-explain-sim" class="btn btn-explain-xai" title="Toggle AI Feature Attribution Factors Dropdown">
-            <span>🧠 Explain My ETA</span>
+            <span id="txt-btn-toggle-explain">🧠 Explain My ETA</span>
             <span id="xai-toggle-arrow" class="xai-arrow">▼</span>
           </button>
         </div>
@@ -565,11 +573,13 @@
             <div class="xai-drawer-title-wrap">
               <span class="xai-drawer-icon">🧠</span>
               <div>
-                <h4 class="xai-drawer-title">Explainable AI (XAI) Attribution Breakdown</h4>
-                <p class="xai-drawer-sub font-mono">SHAP-Style Dynamic Decomposition • Transparent Operational Drivers</p>
+                <h4 id="txt-xai-title" class="xai-drawer-title">Explainable AI (XAI) Attribution Breakdown</h4>
+                <p id="txt-xai-sub" class="xai-drawer-sub font-mono">SHAP-Style Dynamic Decomposition • Transparent Operational Drivers</p>
               </div>
             </div>
-            <button class="xai-drawer-close-btn" id="btn-close-xai-drawer" title="Collapse Explanation">▲ Collapse</button>
+            <button class="xai-drawer-close-btn" id="btn-close-xai-drawer" title="Collapse Explanation">
+              <span id="txt-xai-collapse">▲ Collapse</span>
+            </button>
           </div>
 
           <div class="xai-drawer-body">
@@ -589,7 +599,7 @@
             </div>
 
             <div class="xai-factors-section">
-              <h5 class="xai-section-title">Decomposed Operational Factors (Additive SHAP Delta):</h5>
+              <h5 id="txt-xai-factors-heading" class="xai-section-title">Decomposed Operational Factors (Additive SHAP Delta):</h5>
               <div class="xai-factors-list" id="xai-factors-list">
                 <!-- Dynamically populated -->
               </div>
@@ -598,7 +608,7 @@
             <div class="xai-self-learning-footer font-mono">
               <div class="slf-left">
                 <span class="live-dot-green"></span>
-                <span>Bayesian Continual Self-Learning Engine: <strong>ACTIVE</strong></span>
+                <span id="txt-xai-slf-active">Bayesian Continual Self-Learning Engine: <strong>ACTIVE</strong></span>
               </div>
               <span class="slf-right" id="xai-slf-bias">Online Section Calibration: Locked</span>
             </div>
@@ -613,11 +623,11 @@
         <div class="header-icon-title">
           <span class="icon-pulse">🔄</span>
           <div>
-            <h3 class="card-heading">Automatic Alternate Journey Discovery (Connection Rescue)</h3>
+            <h3 id="txt-rescue-title" class="card-heading">Automatic Alternate Journey Discovery (Connection Rescue)</h3>
             <p id="disp-alternate-reason" class="card-subheading">Train delay detected. Smart alternative train connections found on this corridor.</p>
           </div>
         </div>
-        <span class="badge badge-rescue">Connection Rescue Active</span>
+        <span id="txt-rescue-badge" class="badge badge-rescue">Connection Rescue Active</span>
       </div>
 
       <div id="alternates-list" class="alternates-grid">
@@ -631,31 +641,31 @@
         <div class="header-icon-title">
           <span class="icon-pulse">🧠</span>
           <div>
-            <h3 class="card-heading">Train Behavioral Profile DNA (Quarterly Analysis)</h3>
+            <h3 id="txt-dna-title" class="card-heading">Train Behavioral Profile DNA (Quarterly Analysis)</h3>
             <p id="disp-profile-quarter" class="card-subheading">Based on 2025 actual scraped running data across 90 days</p>
           </div>
         </div>
         <div class="score-pill">
-          <span class="score-title">Punctuality Score:</span>
+          <span id="txt-punctuality-score-label" class="score-title">Punctuality Score:</span>
           <span id="disp-punctuality-score" class="score-number">88 / 100</span>
         </div>
       </div>
 
       <div class="profile-metrics-grid">
         <div class="profile-metric-box">
-          <span class="pm-label">Right-Time Arrivals</span>
+          <span id="txt-pm-right-time" class="pm-label">Right-Time Arrivals</span>
           <span id="disp-pct-right-time" class="pm-val text-success">78.5%</span>
         </div>
         <div class="profile-metric-box">
-          <span class="pm-label">Slight Delay (<30m)</span>
+          <span id="txt-pm-slight-delay" class="pm-label">Slight Delay (<30m)</span>
           <span id="disp-pct-slight-delay" class="pm-val text-warning">18.0%</span>
         </div>
         <div class="profile-metric-box">
-          <span class="pm-label">Significant Delay (>30m)</span>
+          <span id="txt-pm-sig-delay" class="pm-label">Significant Delay (>30m)</span>
           <span id="disp-pct-sig-delay" class="pm-val text-danger">3.5%</span>
         </div>
         <div class="profile-metric-box">
-          <span class="pm-label">Recovery Pattern</span>
+          <span id="txt-recovery-label" class="pm-label">Recovery Pattern</span>
           <span id="disp-recovery-pattern" class="pm-val text-primary">High (8-15m / 100km)</span>
         </div>
       </div>
@@ -666,7 +676,7 @@
           <p id="disp-profile-verdict" class="verdict-text">High-priority Superfast rake. Highly reliable on trunk lines; recovers delay during night runs.</p>
         </div>
         <div class="bottlenecks-box">
-          <strong class="bottlenecks-title">Known Bottleneck Hotspots:</strong>
+          <strong id="txt-bottlenecks-title" class="bottlenecks-title">Known Bottleneck Hotspots:</strong>
           <ul id="disp-bottlenecks-list" class="bottlenecks-list"></ul>
         </div>
       </div>
@@ -677,13 +687,13 @@
       <div class="section-header-row">
         <div class="title-with-badge">
           <h3 id="txt-table-title" class="section-title">Dynamic Downstream Station Forecasts</h3>
-          <span class="badge badge-accent">Adaptive ML Inference</span>
+          <span id="txt-table-badge" class="badge badge-accent">Adaptive ML Inference</span>
         </div>
         <div class="gradient-guide">
-          <span>Distance Gradient:</span>
-          <span class="guide-tag g-tag-green">🟢 &lt;50km (Imminent)</span>
-          <span class="guide-tag g-tag-yellow">🟡 50-150km (Mid Section)</span>
-          <span class="guide-tag g-tag-red">🔴 &gt;150km (Far Terminus)</span>
+          <span id="txt-dist-gradient-label">Distance Gradient:</span>
+          <span id="tag-grad-green" class="guide-tag g-tag-green">🟢 &lt;50km (Imminent)</span>
+          <span id="tag-grad-yellow" class="guide-tag g-tag-yellow">🟡 50-150km (Mid Section)</span>
+          <span id="tag-grad-red" class="guide-tag g-tag-red">🔴 &gt;150km (Far Terminus)</span>
         </div>
       </div>
 
@@ -723,29 +733,29 @@
   <nav class="floating-mobile-dock" id="floating-mobile-dock" aria-label="Quick Navigation">
     <div class="dock-peek-handle" id="dock-peek-handle" title="Hover or click to view quick navigation menu">
       <span class="dock-peek-arrow">▲</span>
-      <span class="dock-peek-label font-mono">QUICK MENU</span>
+      <span id="txt-dock-peek-label" class="dock-peek-label font-mono">QUICK MENU</span>
       <span class="dock-peek-pulse"></span>
     </div>
     <div class="dock-buttons-wrap">
       <button class="dock-btn active" id="dock-btn-track" title="Live Boarding Pass">
         <span class="dock-icon">🚆</span>
-        <span class="dock-lbl">Ticket</span>
+        <span id="txt-dock-ticket" class="dock-lbl">Ticket</span>
       </button>
       <button class="dock-btn" id="dock-btn-map" title="Virtual Track Map">
         <span class="dock-icon">🗺️</span>
-        <span class="dock-lbl">Track Map</span>
+        <span id="txt-dock-map" class="dock-lbl">Track Map</span>
       </button>
       <button class="dock-btn" id="dock-btn-sim" title="What-If Simulator">
         <span class="dock-icon">⚡</span>
-        <span class="dock-lbl">Simulator</span>
+        <span id="txt-dock-sim" class="dock-lbl">Simulator</span>
       </button>
       <button class="dock-btn" id="dock-btn-dna" title="Behavioral DNA">
         <span class="dock-icon">🧠</span>
-        <span class="dock-lbl">DNA Profile</span>
+        <span id="txt-dock-dna" class="dock-lbl">DNA Profile</span>
       </button>
       <a href="/control-room" class="dock-btn dock-staff-btn" title="Control Room Console">
         <span class="dock-icon">🎛️</span>
-        <span class="dock-lbl">Staff Radar</span>
+        <span id="txt-dock-staff" class="dock-lbl">Staff Radar</span>
       </a>
     </div>
   </nav>
@@ -758,7 +768,7 @@
           <span class="modal-header-icon">🏆</span>
           <div>
             <h3 id="jury-modal-title" class="modal-title">SIH Jury Pitch &amp; Empirical Benchmark Verification</h3>
-            <p class="modal-subtitle font-mono">Smart India Hackathon • Indian Railways Dynamic ETA Solution</p>
+            <p id="txt-jury-modal-sub" class="modal-subtitle font-mono">Smart India Hackathon • Indian Railways Dynamic ETA Solution</p>
           </div>
         </div>
         <button class="modal-close-btn" id="btn-close-jury" aria-label="Close Modal">&times;</button>
@@ -767,10 +777,10 @@
       <div class="modal-body sih-jury-body">
         
         <div class="jury-tabs">
-          <button class="jury-tab-btn active" data-tab="tab-benchmarks">📊 Empirical Verification (160k Segments)</button>
-          <button class="jury-tab-btn" data-tab="tab-scenarios">⚡ 1-Click Live Disruption Demos</button>
-          <button class="jury-tab-btn" data-tab="tab-architecture">🏗️ Architecture &amp; Continual Learning</button>
-          <button class="jury-tab-btn" data-tab="tab-roi">💰 Ministry Operational ROI</button>
+          <button class="jury-tab-btn active" data-tab="tab-benchmarks" id="tab-btn-benchmarks">📊 Empirical Verification (160k Segments)</button>
+          <button class="jury-tab-btn" data-tab="tab-scenarios" id="tab-btn-scenarios">⚡ 1-Click Live Disruption Demos</button>
+          <button class="jury-tab-btn" data-tab="tab-architecture" id="tab-btn-architecture">🏗️ Architecture &amp; Continual Learning</button>
+          <button class="jury-tab-btn" data-tab="tab-roi" id="tab-btn-roi">💰 Ministry Operational ROI</button>
         </div>
 
         <!-- TAB 1: EMPIRICAL BENCHMARKS TABLE -->
@@ -778,22 +788,22 @@
           <div class="jury-banner-summary">
             <div class="jbs-metric">
               <span class="jbs-val text-success">4.17 min</span>
-              <span class="jbs-lbl">AI Champion MAE</span>
+              <span class="jbs-lbl" id="txt-jbs-ai-mae">AI Champion MAE</span>
               <span class="jbs-sub font-mono">vs 5.70m Naive NTES</span>
             </div>
             <div class="jbs-metric">
               <span class="jbs-val text-accent">26.8%</span>
-              <span class="jbs-lbl">Error Reduction</span>
+              <span class="jbs-lbl" id="txt-jbs-error-red">Error Reduction</span>
               <span class="jbs-sub font-mono">Over Status-Quo NTES</span>
             </div>
             <div class="jbs-metric">
               <span class="jbs-val text-primary">98.83%</span>
-              <span class="jbs-lbl">SLA Accuracy (±15m)</span>
+              <span class="jbs-lbl" id="txt-jbs-sla">SLA Accuracy (±15m)</span>
               <span class="jbs-sub font-mono">Statutory Operating Norm</span>
             </div>
             <div class="jbs-metric">
               <span class="jbs-val text-warning">0.9552</span>
-              <span class="jbs-lbl">R² Goodness of Fit</span>
+              <span class="jbs-lbl" id="txt-jbs-r2">R² Goodness of Fit</span>
               <span class="jbs-sub font-mono">5-Fold CV Verified</span>
             </div>
           </div>
@@ -861,36 +871,36 @@
             <div class="scenario-card" id="demo-fog-btn">
               <div class="sc-icon">🌫️</div>
               <div class="sc-content">
-                <span class="sc-title">Dense Winter Fog (North / Eastern Zone)</span>
+                <span class="sc-title" id="txt-sc-title-fog">Dense Winter Fog (North / Eastern Zone)</span>
                 <p class="sc-desc">Restricts loco speed to 30 km/h caution orders. Propagates +18m delay across foggy sections.</p>
-                <button class="btn sc-action-btn">▶️ Test Fog Scenario</button>
+                <button class="btn sc-action-btn" id="txt-sc-btn-fog">▶️ Test Fog Scenario</button>
               </div>
             </div>
 
             <div class="scenario-card" id="demo-festival-btn">
               <div class="sc-icon">🪔</div>
               <div class="sc-content">
-                <span class="sc-title">Diwali / Chhath Festive Boarding Surge</span>
+                <span class="sc-title" id="txt-sc-title-festival">Diwali / Chhath Festive Boarding Surge</span>
                 <p class="sc-desc">Overcrowded platforms elongate dwell times by +3 min/station. Activates alternate journey rescue.</p>
-                <button class="btn sc-action-btn">▶️ Test Festival Rush</button>
+                <button class="btn sc-action-btn" id="txt-sc-btn-festival">▶️ Test Festival Rush</button>
               </div>
             </div>
 
             <div class="scenario-card" id="demo-ohe-btn">
               <div class="sc-icon">⚡</div>
               <div class="sc-content">
-                <span class="sc-title">25kV OHE Overhead Power Tripping</span>
+                <span class="sc-title" id="txt-sc-title-ohe">25kV OHE Overhead Power Tripping</span>
                 <p class="sc-desc">Traction cutoff halts rakes at outer signals (+35m delay). Triggers HOER crew relief rescheduling.</p>
-                <button class="btn sc-action-btn">▶️ Test OHE Defect</button>
+                <button class="btn sc-action-btn" id="txt-sc-btn-ohe">▶️ Test OHE Defect</button>
               </div>
             </div>
 
             <div class="scenario-card" id="demo-kavach-btn">
               <div class="sc-icon">🛡️</div>
               <div class="sc-content">
-                <span class="sc-title">Kavach TCAS Radar Supervision</span>
+                <span class="sc-title" id="txt-sc-title-kavach">Kavach TCAS Radar Supervision</span>
                 <p class="sc-desc">Displays automatic train protection safe braking distance arc and movement authority in Control Room.</p>
-                <button class="btn sc-action-btn">▶️ Open Kavach Console</button>
+                <button class="btn sc-action-btn" id="txt-sc-btn-kavach">▶️ Open Kavach Console</button>
               </div>
             </div>
           </div>

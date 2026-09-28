@@ -18,13 +18,13 @@
       <div class="portal-tabs">
         <a href="/" class="portal-tab">
           <span class="portal-tab-icon">🚆</span>
-          <span>Passenger Mobile App</span>
-          <span class="tab-pill">Public Portal</span>
+          <span id="cr-txt-portal-passenger">Passenger Mobile App</span>
+          <span class="tab-pill" id="cr-txt-portal-public">Public Portal</span>
         </a>
         <a href="/control-room" class="portal-tab active staff-active">
           <span class="portal-tab-icon">🎛️</span>
-          <span>Nexroute Control Console</span>
-          <span class="tab-pill staff-pill">Staff Active</span>
+          <span id="cr-txt-portal-control">Nexroute Control Console</span>
+          <span class="tab-pill staff-pill" id="cr-txt-portal-staff">Staff Active</span>
         </a>
       </div>
 
@@ -46,7 +46,7 @@
         <!-- Cabin Sound FX & Audio Chime Toggle -->
         <button class="audio-toggle-btn btn-audio-pill staff-audio-pill" title="Toggle Station Chimes & Dispatch Audio">
           <span>🔊</span>
-          <span>Audio ON</span>
+          <span id="cr-txt-audio">Audio ON</span>
         </button>
 
         <div class="lang-selector-wrapper staff-lang-wrap">
@@ -78,7 +78,7 @@
     <div class="nex-topbar-meta">
       <button id="btn-roi-calculator" class="btn btn-roi-pill font-mono" title="Railway Ministry Financial ROI & Operational Cost Savings Calculator">
         <span>💰</span>
-        <span>Ministry ROI: ₹19.4 Cr/yr</span>
+        <span id="cr-txt-roi-label">Ministry ROI: ₹19.4 Cr/yr</span>
       </button>
 
       <div class="nex-date-badge font-mono">
@@ -131,7 +131,7 @@
     <!-- Column 1: Fleet Tracking List Column (inspired by PIC 3) -->
     <aside class="nex-fleet-panel">
       <div class="fleet-header">
-        <h3 class="fleet-title">Tracking List</h3>
+        <h3 class="fleet-title" id="cr-txt-fleet-title">Tracking List</h3>
         <span class="badge badge-accent" id="fleet-count-badge">5 Trains</span>
       </div>
 

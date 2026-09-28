@@ -23,7 +23,9 @@ const crState = {
     target_speed_kmh: 105,
     spad_risk_level: 'NOMINAL (Zero SPAD Violation Detected)',
     rfid_transponder: 'RFID-KM-214-UP-MAIN'
-  }
+  },
+  currentLang: 'en',
+  translations: {}
 };
 let gisKavachArcLayer = null;
 
@@ -130,9 +132,51 @@ const STATION_COORDS = {
   'KBK':  [25.4333, 73.8333]
 };
 
+// Multilingual i18n for Control Room
+async function loadCrLanguage(lang) {
+  try {
+    const res = await fetch(`/api/i18n/${lang}`);
+    const data = await res.json();
+    crState.currentLang = lang;
+    crState.translations = data.strings || {};
+    applyCrTranslations();
+  } catch (err) {
+    console.error('Failed to load control room translations:', err);
+  }
+}
+
+function applyCrTranslations() {
+  const t = crState.translations;
+  if (!t || !t.title) return;
+
+  const setTxt = (id, text) => {
+    if (!text) return;
+    const node = document.getElementById(id);
+    if (node) node.textContent = text;
+  };
+
+  setTxt('cr-txt-portal-passenger', t.portal_passenger_app);
+  setTxt('cr-txt-portal-public', t.cr_public_portal);
+  setTxt('cr-txt-portal-control', t.portal_control_room);
+  setTxt('cr-txt-portal-staff', t.cr_staff_active);
+  setTxt('cr-stream-status', t.cr_stream_locked);
+  setTxt('cr-txt-audio', t.audio_on);
+  setTxt('cr-txt-roi-label', t.cr_ministry_roi);
+  setTxt('cr-txt-fleet-title', t.cr_tracking_list);
+  if (crEl.fleetSearchInput && t.cr_search_placeholder) {
+    crEl.fleetSearchInput.placeholder = t.cr_search_placeholder;
+  }
+  setTxt('btn-mode-gis', t.cr_gis_map);
+  setTxt('btn-mode-cad', t.cr_tactical_radar);
+  setTxt('cr-btn-inject-signal', t.cr_inject_red_signal);
+  setTxt('cr-btn-clear-signal', t.cr_clear_block);
+  setTxt('cr-btn-recenter', t.cr_recenter);
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
   applyTheme(crState.theme);
+  await loadCrLanguage('en');
   setupListeners();
   initGisMap();
   await loadFleetTelemetry();
@@ -365,6 +409,14 @@ function setupListeners() {
     themeToggle.addEventListener('click', () => {
       const nextTheme = crState.theme === 'dark' ? 'light' : 'dark';
       applyTheme(nextTheme);
+    });
+  }
+
+  // Language selector
+  const langSelect = document.getElementById('lang-selector-cr');
+  if (langSelect) {
+    langSelect.addEventListener('change', (e) => {
+      loadCrLanguage(e.target.value);
     });
   }
 

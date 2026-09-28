@@ -439,24 +439,143 @@ async function loadLanguage(lang) {
 
 function applyTranslations() {
   const t = state.translations;
-  if (!t.title) return;
+  if (!t || !t.title) return;
 
-  document.getElementById('txt-title').textContent = t.title;
-  document.getElementById('txt-subtitle').textContent = t.subtitle;
-  el.searchInput.placeholder = t.search_train_placeholder;
-  document.getElementById('txt-search-btn').textContent = t.search_button;
-  document.getElementById('txt-current-delay-label').textContent = t.current_delay;
-  document.getElementById('txt-weather-label').textContent = t.weather_condition;
-  document.getElementById('txt-congestion-label').textContent = t.track_congestion;
-  document.getElementById('txt-table-title').textContent = t.predict_eta_btn;
+  const setTxt = (id, text) => {
+    if (!text) return;
+    const node = document.getElementById(id);
+    if (node) node.textContent = text;
+  };
 
-  document.getElementById('th-stn').textContent = t.station;
-  document.getElementById('th-sched').textContent = t.sched_arr;
-  document.getElementById('th-static').textContent = t.static_eta;
-  document.getElementById('th-ai').textContent = t.ai_eta;
-  document.getElementById('th-delay').textContent = t.delay;
-  document.getElementById('th-trend').textContent = t.trend;
-  document.getElementById('th-rec').textContent = t.recovery;
+  // Top Nav & Brand
+  setTxt('txt-portal-passenger', t.portal_passenger_app);
+  setTxt('txt-portal-control', t.portal_control_room);
+  setTxt('txt-sih-jury-btn', t.btn_sih_jury);
+  setTxt('txt-ntes-status', t.ntes_live_active);
+  setTxt('txt-title', t.title);
+  setTxt('txt-subtitle', t.subtitle);
+  setTxt('txt-ml-precision-badge', t.ml_precision_badge);
+
+  // Search & Corridors
+  if (el.searchInput && t.search_train_placeholder) {
+    el.searchInput.placeholder = t.search_train_placeholder;
+  }
+  setTxt('txt-search-btn', t.search_button);
+  setTxt('txt-popular-title', t.popular_trains);
+  setTxt('txt-fc-title', t.flagship_corridors_title);
+  setTxt('txt-fc-sub', t.flagship_corridors_sub);
+  if (t.track_live_btn) {
+    document.querySelectorAll('.fc-track-btn').forEach(btn => {
+      btn.textContent = t.track_live_btn;
+    });
+  }
+
+  // Date Strip
+  setTxt('txt-journey-date-label', t.journey_date_label);
+  setTxt('txt-date-today', t.today);
+
+  // Boarding Pass Ticket
+  setTxt('txt-bp-dep-label', t.departure);
+  setTxt('txt-bp-arr-label', t.arrival);
+  setTxt('txt-bp-platform-label', t.est_platform);
+  setTxt('txt-current-delay-label', t.current_delay);
+  setTxt('txt-bp-speed-label', t.live_gps_speed);
+  setTxt('txt-bp-signal-label', t.signal_ahead);
+  setTxt('txt-rolling-stock-title', t.rolling_stock_title);
+  setTxt('txt-btn-explain', t.btn_explain_eta);
+  setTxt('txt-btn-map', t.btn_track_map);
+
+  // What-If Simulator
+  setTxt('txt-sim-title', t.sim_title);
+  setTxt('txt-sim-note', t.sim_note);
+  setTxt('txt-sim-station-label', t.sim_loc_label);
+  setTxt('txt-sim-delay-label', t.sim_delay_label);
+  setTxt('txt-weather-label', t.weather_condition);
+  setTxt('opt-weather-clear', t.weather_clear);
+  setTxt('opt-weather-rain', t.weather_rain);
+  setTxt('opt-weather-fog', t.weather_fog);
+  setTxt('txt-congestion-label', t.track_congestion);
+  setTxt('opt-congestion-normal', t.congestion_normal);
+  setTxt('opt-congestion-high', t.congestion_high);
+  setTxt('opt-congestion-low', t.congestion_low);
+  setTxt('txt-day-label', t.sim_day_label);
+  setTxt('txt-occasion-label', t.sim_occasion_label);
+  setTxt('txt-civil-label', t.sim_civil_label);
+  setTxt('txt-tech-label', t.sim_tech_label);
+  setTxt('txt-priority-label', t.sim_priority_label);
+  setTxt('txt-btn-recalculate', t.btn_recalculate);
+  setTxt('txt-btn-step-sim', t.btn_step_sim);
+  setTxt('txt-btn-inject-delay', t.btn_inject_delay);
+  setTxt('txt-btn-reset-sim', t.btn_reset_sim);
+  setTxt('txt-btn-toggle-explain', t.btn_explain_eta);
+
+  // Explainable AI (XAI)
+  setTxt('txt-xai-title', t.xai_title);
+  setTxt('txt-xai-sub', t.xai_sub);
+  setTxt('txt-xai-collapse', t.xai_collapse);
+  setTxt('txt-xai-factors-heading', t.xai_factors_heading);
+  setTxt('txt-xai-slf-active', t.xai_self_learning_active);
+  setTxt('xai-slf-bias', t.xai_calibration_locked);
+
+  // Connection Rescue
+  setTxt('txt-rescue-title', t.rescue_title);
+  setTxt('txt-rescue-badge', t.rescue_badge);
+
+  // Behavioral Profile DNA
+  setTxt('txt-dna-title', t.dna_title);
+  setTxt('txt-punctuality-score-label', t.punctuality_score_label);
+  setTxt('txt-pm-right-time', t.right_time_arrivals);
+  setTxt('txt-pm-slight-delay', t.slight_delay);
+  setTxt('txt-pm-sig-delay', t.significant_delay);
+  setTxt('txt-recovery-label', t.recovery_pattern_label);
+  setTxt('txt-bottlenecks-title', t.chronic_bottlenecks);
+
+  // Downstream Forecast Table
+  setTxt('txt-table-title', t.table_title || t.predict_eta_btn);
+  setTxt('txt-table-badge', t.table_badge);
+  setTxt('txt-dist-gradient-label', t.dist_gradient_label);
+  setTxt('tag-grad-green', t.dist_grad_green);
+  setTxt('tag-grad-yellow', t.dist_grad_yellow);
+  setTxt('tag-grad-red', t.dist_grad_red);
+  setTxt('th-stn', t.station);
+  setTxt('th-platform', t.th_platform);
+  setTxt('th-dist-grad', t.th_dist_grad);
+  setTxt('th-sched', t.sched_arr);
+  setTxt('th-static', t.static_eta);
+  setTxt('th-ai', t.ai_eta);
+  setTxt('th-delay', t.delay);
+  setTxt('th-trend', t.trend);
+  setTxt('th-rec', t.recovery);
+  setTxt('txt-empty-prompt', t.select_train_prompt);
+
+  // Floating Quick Mobile Dock
+  setTxt('txt-dock-peek-label', t.dock_quick_menu);
+  setTxt('txt-dock-ticket', t.dock_ticket);
+  setTxt('txt-dock-map', t.dock_map);
+  setTxt('txt-dock-sim', t.dock_sim);
+  setTxt('txt-dock-dna', t.dock_dna);
+  setTxt('txt-dock-staff', t.dock_staff);
+
+  // SIH Jury Modal
+  setTxt('jury-modal-title', t.jury_modal_title);
+  setTxt('txt-jury-modal-sub', t.jury_modal_sub);
+  setTxt('tab-btn-benchmarks', t.tab_benchmarks);
+  setTxt('tab-btn-scenarios', t.tab_scenarios);
+  setTxt('tab-btn-architecture', t.tab_architecture);
+  setTxt('tab-btn-roi', t.tab_roi);
+  setTxt('txt-jbs-ai-mae', t.jbs_ai_mae);
+  setTxt('txt-jbs-error-red', t.jbs_error_reduction);
+  setTxt('txt-jbs-sla', t.jbs_sla_accuracy);
+  setTxt('txt-jbs-r2', t.jbs_r2);
+  setTxt('txt-sc-btn-fog', t.demo_fog_btn);
+  setTxt('txt-sc-btn-festival', t.demo_festival_btn);
+  setTxt('txt-sc-btn-ohe', t.demo_ohe_btn);
+  setTxt('txt-sc-btn-kavach', t.demo_kavach_btn);
+
+  // If forecast table is currently shown, re-render to update dynamic trends
+  if (state.currentTrain && state.forecast && state.forecast.length > 0) {
+    renderForecastTable(state.forecast);
+  }
 }
 
 // Search
@@ -793,11 +912,12 @@ function renderETATable(forecast, currentDistanceKm) {
     const staticEta = addMinutesToTimeStr(sched, state.currentDelay);
     const aiEta = addMinutesToTimeStr(sched, stn.predicted_delay_min || 0);
 
-    let trendHtml = `<span class="trend-badge trend-steady">■ Steady</span>`;
+    const t = state.translations || {};
+    let trendHtml = `<span class="trend-badge trend-steady">■ ${t.trend_steady || 'Steady'}</span>`;
     if (stn.delay_trend === 'RECOVERING') {
-      trendHtml = `<span class="trend-badge trend-recovering">▲ Recovering</span>`;
+      trendHtml = `<span class="trend-badge trend-recovering">▲ ${t.trend_recovering || 'Recovering'}</span>`;
     } else if (stn.delay_trend === 'COMPOUNDING') {
-      trendHtml = `<span class="trend-badge trend-compounding">▼ Compounding</span>`;
+      trendHtml = `<span class="trend-badge trend-compounding">▼ ${t.trend_compounding || 'Compounding'}</span>`;
     } else if (isCurrent) {
       trendHtml = `<span class="badge badge-train">● Current</span>`;
     }
