@@ -1,15 +1,17 @@
 # 🚆 Indian Railways Dynamic AI ETA & Real-Time Tactical Fleet Prototype
 
-[![The Retention Squad](https://img.shields.io/badge/Team-The_Retention_Squad-FF5722.svg?style=for-the-badge&logo=shield)](https://github.com/ayuvan/indian-railways-ai-eta)
-[![SIH 2024](https://img.shields.io/badge/SIH-2024_Grand_Finalist-orange.svg?style=for-the-badge&logo=railway)](https://sih.gov.in)
+[![The Retention Squad](https://img.shields.io/badge/Team-The_Retention_Squad_(151003)-FF5722.svg?style=for-the-badge&logo=shield)](https://github.com/ayuvan/indian-railways-ai-eta)
+[![SIH 2026](https://img.shields.io/badge/SIH-2026_Grand_Finalist-orange.svg?style=for-the-badge&logo=railway)](https://sih.gov.in)
+[![Problem Statement](https://img.shields.io/badge/Problem_Statement_ID-26028-0284C7.svg?style=for-the-badge)](https://sih.gov.in)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI_0.110-009688.svg?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com)
 [![Scikit-Learn](https://img.shields.io/badge/ML-HistGradientBoosting-F7931E.svg?style=for-the-badge&logo=scikit-learn)](https://scikit-learn.org)
 [![Deployment](https://img.shields.io/badge/Render-Live_Deployed-46E3B7.svg?style=for-the-badge&logo=render)](https://indian-railways-ai-eta.onrender.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-> **Official Solution for Smart India Hackathon (SIH)**  
-> **Problem Statement:** Dynamic ETA Prediction & Real-Time Operational Fleet Optimization for Indian Railways  
-> **Developed by:** **The Retention Squad**  
+> **Official Solution for Smart India Hackathon (SIH 2026)**  
+> **Problem Statement ID:** **26028** (Dynamic ETA Prediction for Indian Railways)  
+> **Team Name:** **The Retention Squad**  
+> **Team ID:** **151003**  
 > **Team Leader & AI Architect:** Yuvan Siddharth ([@ayuvan](https://github.com/ayuvan) • `ayuvanashok@gmail.com`)  
 > **Team Members:** Janhavi Sathish, Janani, A Kanishkar, Akshara Ashok, Aisvarya Lakshme Kannan  
 > **Live Demo:** [https://indian-railways-ai-eta.onrender.com](https://indian-railways-ai-eta.onrender.com)  
@@ -245,8 +247,10 @@ A complete, publication-grade technical manual and user operations guidebook is 
 
 ## 👥 The Retention Squad (Credits & Contact)
 
-This prototype was conceptualized, architected, and developed for the **Smart India Hackathon (SIH)** by **The Retention Squad**:
-
+This prototype was conceptualized, architected, and developed for the **Smart India Hackathon (SIH 2026)**:
+- **Problem Statement ID:** **26028** (Dynamic ETA Prediction for Indian Railways)
+- **Team Name:** **The Retention Squad**
+- **Team ID:** **151003**
 - **Team Leader & AI Architect:** **Yuvan Siddharth** ([@ayuvan](https://github.com/ayuvan))
 - **Team Members:**
   - **Janhavi Sathish**

@@ -140,7 +140,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         
         # SIH Jury Pitch & Benchmark Modal
         "jury_modal_title": "SIH Jury Pitch & Empirical Benchmark Verification",
-        "jury_modal_sub": "Smart India Hackathon • Indian Railways Dynamic ETA Solution",
+        "jury_modal_sub": "Smart India Hackathon (SIH 2026) • Problem Statement ID: 26028 • Team ID: 151003",
         "tab_benchmarks": "📊 Empirical Verification (160k Segments)",
         "tab_scenarios": "⚡ 1-Click Live Disruption Demos",
         "tab_architecture": "🏗️ Architecture & Continual Learning",
@@ -303,7 +303,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         
         # SIH Jury Pitch & Benchmark Modal
         "jury_modal_title": "SIH जूरी प्रस्तुति एवं अनुभवजन्य मानक सत्यापन",
-        "jury_modal_sub": "स्मार्ट इंडिया हैकाथॉन • भारतीय रेल गतिशील AI आगमन प्रणाली",
+        "jury_modal_sub": "स्मार्ट इंडिया हैकाथॉन (SIH 2026) • समस्या विवरण ID: 26028 • टीम ID: 151003",
         "tab_benchmarks": "📊 अनुभवजन्य सत्यापन (1.6 लाख खंड)",
         "tab_scenarios": "⚡ 1-क्लिक लाइव व्यवधान डेमो",
         "tab_architecture": "🏗️ आर्किटेक्चर एवं सतत अधिगम",
@@ -466,7 +466,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         
         # SIH Jury Pitch & Benchmark Modal
         "jury_modal_title": "SIH நடுவர் விளக்கக்காட்சி மற்றும் நேரடி தரவு சரிபார்ப்பு",
-        "jury_modal_sub": "ஸ்மார்ட் இந்தியா ஹேக்கத்தான் • இந்திய ரயில்வே டைனமிக் ETA தீர்வு",
+        "jury_modal_sub": "ஸ்மார்ட் இந்தியா ஹேக்கத்தான் (SIH 2026) • சிக்கல் அறிக்கை ID: 26028 • குழு ID: 151003",
         "tab_benchmarks": "📊 தரவு சரிபார்ப்பு (1.6 லட்சம் பகுதிகள்)",
         "tab_scenarios": "⚡ 1-கிளிக் நேரலை செயல்விளக்கம்",
         "tab_architecture": "🏗️ கட்டமைப்பு மற்றும் தொடர் கற்றல்",
@@ -629,7 +629,7 @@ TRANSLATIONS: Dict[str, Dict[str, str]] = {
         
         # SIH Jury Pitch & Benchmark Modal
         "jury_modal_title": "SIH జ్యూరీ ప్రదర్శన & గణాంక ధృవీకరణ",
-        "jury_modal_sub": "స్మార్ట్ ఇండియా హ్యాకథాన్ • భారతీయ రైల్వే డైనమిక్ ETA పరిష్కారం",
+        "jury_modal_sub": "స్మార్ట్ ఇండియా హ్యాకథాన్ (SIH 2026) • సమస్య ప్రకటన ID: 26028 • జట్టు ID: 151003",
         "tab_benchmarks": "📊 గణాంక ధృవీకరణ (1.6 లక్షల విభాగాలు)",
         "tab_scenarios": "⚡ 1-క్లిక్ లైవ్ డెమోలు",
         "tab_architecture": "🏗️ ఆర్కిటెక్చర్ & నిరంతర అభ్యాసం",

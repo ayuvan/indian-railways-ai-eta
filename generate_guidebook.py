@@ -44,14 +44,14 @@ class NumberedCanvas(canvas.Canvas):
         if self._pageNumber > 1:
             # Running Header
             self.drawString(54, 755, "INDIAN RAILWAYS AI ETA PROTOTYPE • SYSTEM & OPERATIONS MANUAL")
-            self.drawRightString(612 - 54, 755, "SIH HACKATHON 2024")
+            self.drawRightString(612 - 54, 755, "SIH 2026 • PS: 26028 • TEAM: 151003")
             self.setStrokeColor(colors.HexColor("#CBD5E1"))
             self.setLineWidth(0.75)
             self.line(54, 747, 612 - 54, 747)
 
         # Running Footer on all pages
         self.setFont("Helvetica", 8)
-        self.drawString(54, 38, "Confidential • Ministry of Railways & SIH Evaluation Prototype • Lead: Yuvan Siddharth")
+        self.drawString(54, 38, "Confidential • Ministry of Railways & SIH 2026 (PS: 26028) • The Retention Squad (Team ID: 151003)")
         page_str = f"Page {self._pageNumber} of {page_count}"
         self.drawRightString(612 - 54, 38, page_str)
         self.setStrokeColor(colors.HexColor("#E2E8F0"))
@@ -169,11 +169,11 @@ def build_pdf(filename="docs/Indian_Railways_AI_ETA_Guidebook.pdf"):
     # ==========================================
     meta_banner_data = [
         [
-            Paragraph("<b>GOVERNMENT OF INDIA • MINISTRY OF RAILWAYS</b><br/><font size='7.5' color='#64748B'>Smart India Hackathon (SIH) • Problem Statement ID: SIH-2024</font>", body_style),
+            Paragraph("<b>GOVERNMENT OF INDIA • MINISTRY OF RAILWAYS</b><br/><font size='7.5' color='#64748B'>Smart India Hackathon (SIH 2026) • Problem Statement ID: 26028 • Team ID: 151003</font>", body_style),
             Paragraph("<b>PRODUCTION PROTOTYPE v2.4</b><br/><font size='7.5' color='#0284C7'>Deployed on Render Cloud (AP-Southeast)</font>", ParagraphStyle('RMeta', parent=body_style, alignment=2))
         ]
     ]
-    t_meta = Table(meta_banner_data, colWidths=[320, 184])
+    t_meta = Table(meta_banner_data, colWidths=[355, 149])
     t_meta.setStyle(TableStyle([
         ('BOTTOMPADDING', (0,0), (-1,-1), 4),
         ('TOPPADDING', (0,0), (-1,-1), 0),
@@ -187,6 +187,10 @@ def build_pdf(filename="docs/Indian_Railways_AI_ETA_Guidebook.pdf"):
 
     # Meta Overview Box
     meta_box = [
+        [
+            Paragraph("<b>Team:</b> The Retention Squad (Team ID: 151003)", body_style),
+            Paragraph("<b>Problem Statement ID:</b> 26028 (SIH 2026)", body_style),
+        ],
         [
             Paragraph("<b>Lead Engineer:</b> Yuvan Siddharth", body_style),
             Paragraph("<b>Champion Model:</b> HistGradientBoostingRegressor", body_style),
@@ -216,7 +220,7 @@ def build_pdf(filename="docs/Indian_Railways_AI_ETA_Guidebook.pdf"):
     # ==========================================
     # SECTION 1: EXECUTIVE SUMMARY
     # ==========================================
-    story.append(Paragraph("1. Executive Summary & SIH Problem Statement", h1_style))
+    story.append(Paragraph("1. Executive Summary & SIH Problem Statement (ID: 26028)", h1_style))
     story.append(Paragraph(
         "<b>The Operational Challenge:</b> Over 24 million passengers board Indian Railways trains daily across a 68,000+ km network. "
         "The legacy National Train Enquiry System (NTES) estimates train arrival times using a naive linear formula: "
@@ -319,7 +323,7 @@ def build_pdf(filename="docs/Indian_Railways_AI_ETA_Guidebook.pdf"):
     # ==========================================
     # SECTION 4: SIH JURY EVALUATION & BENCHMARKS
     # ==========================================
-    story.append(Paragraph("4. SIH Hackathon Jury Evaluation Mode & Empirical Verification", h1_style))
+    story.append(Paragraph("4. SIH Hackathon Jury Evaluation Mode & Empirical Verification (Team ID: 151003)", h1_style))
     story.append(Paragraph(
         "Clicking <b>'🏆 SIH Jury Mode'</b> in the top navbar launches an elevated modal popup window presenting empirical cross-verification results "
         "calculated across 160,625 ground-truth train segment records:",
