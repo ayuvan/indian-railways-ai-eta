@@ -1,5 +1,6 @@
 # 🚆 Indian Railways Dynamic AI ETA & Real-Time Tactical Fleet Prototype
 
+[![The Retention Squad](https://img.shields.io/badge/Team-The_Retention_Squad-FF5722.svg?style=for-the-badge&logo=shield)](https://github.com/ayuvan/indian-railways-ai-eta)
 [![SIH 2024](https://img.shields.io/badge/SIH-2024_Grand_Finalist-orange.svg?style=for-the-badge&logo=railway)](https://sih.gov.in)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI_0.110-009688.svg?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com)
 [![Scikit-Learn](https://img.shields.io/badge/ML-HistGradientBoosting-F7931E.svg?style=for-the-badge&logo=scikit-learn)](https://scikit-learn.org)
@@ -7,11 +8,12 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
 > **Official Solution for Smart India Hackathon (SIH)**  
-> **Problem Statement ID: SIH-2024 / Dynamic ETA Prediction for Indian Railways**  
-> **Author & Lead Architect:** Yuvan Siddharth (`yuvan`)  
+> **Problem Statement:** Dynamic ETA Prediction & Real-Time Operational Fleet Optimization for Indian Railways  
+> **Developed by:** **The Retention Squad**  
+> **Team Leader & AI Architect:** Yuvan Siddharth ([@ayuvan](https://github.com/ayuvan) • `ayuvanashok@gmail.com`)  
 > **Team Members:** Janhavi Sathish, Janani, A Kanishkar, Akshara Ashok, Aisvarya Lakshme Kannan  
 > **Live Demo:** [https://indian-railways-ai-eta.onrender.com](https://indian-railways-ai-eta.onrender.com)  
-> **Documentation:** [Download Official PDF Operations Guidebook](docs/Indian_Railways_AI_ETA_Guidebook.pdf)
+> **Technical Operations Guidebook:** [Download Official PDF Manual](docs/Indian_Railways_AI_ETA_Guidebook.pdf)
 
 ---
 
@@ -23,9 +25,10 @@ $$\text{ETA} = \text{Current Time} + \left(\frac{\text{Remaining Distance}}{\tex
 
 This status-quo approach fails to account for non-linear dynamic frictions: section track congestion, single-line waiting loops, severe weather disruptions (e.g., Gangetic plain winter fog), rake turnaround dwell times, and loco pilot crew relief under statutory **HOER (Hours of Employment and Period of Rest)** rules.
 
-This prototype introduces a **non-linear, multi-factor Machine Learning ETA prediction engine** coupled with an enterprise dual-tier interface:
-1. **Passenger Mobile Web App (PWA):** Digital Boarding Pass ticket, proximity gradient forecasts, and Explainable AI (XAI) feature attribution.
-2. **Nexroute Tactical Control Room Console:** Dispatcher radar, live GIS locomotive tracking, Kavach TCAS integration, HOER crew fatigue monitors, and Ministerial Financial ROI calculators.
+**The Retention Squad** engineered a **non-linear, multi-factor Machine Learning ETA prediction engine** coupled with an enterprise dual-tier interface and real-time operational station management:
+1. **Passenger Mobile Web Portal (PWA):** Digital Boarding Pass ticket, proximity gradient forecasts, 4-language i18n localization, and Explainable AI (XAI) feature attribution.
+2. **Nexroute Tactical Control Room Console:** Section Controller radar, live GIS locomotive tracking, Kavach TCAS integration, interactive control panels, and an **AI Dynamic Cleaning Staff & Crew Roster Auto-Scheduler**.
+3. **Decoupled Responsive Architecture:** Complete separation between desktop Electronic Interlocking (EI) consoles and mobile smartphone touch modes without layout mashup.
 
 ---
 
@@ -54,39 +57,61 @@ The primary champion model (**HistGradientBoostingRegressor**) was trained and c
 
 ---
 
-## 🚀 Key Innovations & Features
+## 🚀 Key Innovations & Completed Milestones
 
-### 1. 🧠 Explainable AI (XAI) Attribution Breakdown
+### 1. 🧹 AI Dynamic Cleaning Staff & Crew Itinerary Auto-Scheduler
+- **Dynamic Duty Adjustments**: Solves station contractor idle time when trains run behind schedule. When the AI predicts delays downstream, the engine automatically reschedules station cleaning crews, coach sanitization teams, linen suppliers, and water filling squads.
+- **Pre-Arrival Assembly Alerts**: Contractor teams are assigned updated shift windows and automatically prompted to assemble **10 minutes prior** to the dynamically revised ETA.
+- **HOER Statutory Crew Compliance**: Tracks loco pilot and assistant loco pilot duty hours against the 8.0-hour statutory limit, triggering advance crew relief warnings at interchange junctions.
+
+### 2. 📱 Fully Decoupled Desktop vs. Smartphone Experience (Zero Mashup)
+- **Desktop Mode (`> 1024px`)**: Full 4-column Electronic Interlocking (EI) control layout with persistent left navigation rail, active fleet roster, GIS radar, and telemetry inspector.
+- **Smartphone Touch Mode (`<= 1024px`)**:
+  - Automatically activates a **3-Tab Segmented Mobile Switcher**:
+    - `[ 🚆 Fleet List ]`: Full-screen touch-friendly active fleet selector.
+    - `[ 🗺️ Radar & Panes ]`: Full-width live Leaflet map and speed dials (with automatic `gisMap.invalidateSize()` recalculation on tab switch).
+    - `[ 🔍 Inspector ]`: Full-width AI delay factor breakdown, crew duty status, and cleaning roster.
+  - The vertical navigation strip morphs into a sleek top horizontal utility bar with 44px accessible touch targets.
+
+### 3. ⚓ Smart Floating Quick Dock (Auto-Hide & Touch-Safe)
+- Solved mobile touch `:hover` entrapment by restricting hover triggers strictly to fine desktop pointers (`@media (hover: hover) and (pointer: fine)`).
+- Collapses smoothly into a subtle bottom peek tab.
+- Automatically dismisses upon tapping any action button, tapping/clicking anywhere outside the dock, scrolling the page, or after 4.5 seconds of idle inactivity. Includes an explicit touch close (`✕`) handle.
+
+### 4. 🌐 Quad-Language Comprehensive Localization (i18n)
+- Seamless real-time translation across 4 major Indian languages:
+  - **English (EN)**
+  - **Hindi (HI - हिन्दी)**
+  - **Tamil (TA - தமிழ்)**
+  - **Telugu (TE - తెలుగు)**
+- Translates dynamic ETAs, delay explanations, boarding pass details, control room alerts, simulator disruptions, and staff scheduling panels.
+
+### 5. 🎨 Official Brand Identity & Vector Assets
+- **Vector Logo (`frontend/assets/logo.svg`)**: Aerodynamic bullet locomotive nose, AI radar waveform arcs, converging tracks, and official "RAILYATRI AI" typography.
+- **Web Favicon (`frontend/assets/favicon.svg` & `/favicon.ico`)**: High-contrast squircle icon rendered in browser tabs, bookmarks, and mobile home screen shortcuts.
+
+### 6. 🧠 Explainable AI (XAI) Attribution Drawer
 - Transparently decomposes ETA predictions into additive **SHAP-style operational factors**.
-- Expands directly below the **What-If Simulator** as a smooth collapsible drawer.
-- Discloses the exact minute deltas driven by track speed restrictions, dense fog, rake dwell, and timetable buffer slack.
+- Expands directly beneath the **What-If Simulator** as a smooth collapsible drawer.
+- Discloses the exact minute deltas driven by speed restrictions, weather, rake turnaround dwell, and timetable buffer slack.
 
-### 2. ⚡ What-If Multi-Factor Operational Disruption Simulator
+### 7. ⚡ Multi-Factor Operational Disruption Simulator
 - Enables users and dispatchers to simulate disruptions in real time:
   - **Severe Weather:** Dense Fog, Heavy Monsoon Downpours, Extreme Heat.
   - **Occasions & Surges:** Diwali/Chhath Festival Rush, Mahakumbh, Summer Holidays.
   - **Technical Failures:** 25kV OHE power line tripping, outer signal track-circuit failure.
   - **Single-Line Preemption:** Freight prioritization and loop line hold.
 
-### 3. 🔄 Automatic Connection Rescue (Alternate Journey Discovery)
-- Automatically queries parallel corridor schedules when delays exceed transit safety thresholds.
-- Recommends alternative express train connections to prevent missed passenger journeys.
+### 8. 🔄 Automatic Connection Rescue (Alternate Journey Discovery)
+- Automatically scans parallel corridors when delays threaten transfer feasibility.
+- Recommends alternative express train options with departure buffers to safeguard onward passenger travel.
 
-### 4. 🧬 3-Month Train Behavioral Profile DNA
-- Provides historical quarterly punctuality scores (0–100).
+### 9. 🧬 3-Month Train Behavioral Profile DNA
+- Analyzes quarterly historical punctuality scores (0–100).
 - Identifies chronic bottleneck halts (e.g., Erode Jn, Salem Jn, Tiruppur) and recovery indexes per 100 km.
 
-### 5. 🎛️ Nexroute Tactical Dispatcher Control Room Console
-- **GIS Tactical Radar:** Real-time train positioning with track coordinates and sub-20ms telemetry latency.
-- **Kavach TCAS ATP:** RFID track balise lock, UHF radio carrier integrity, and automatic brake curve safety envelope.
-- **HOER Crew Fatigue Monitor:** Automatically tracks loco pilot duty hours against 8-hour statutory caps and triggers crew relieve rosters at interchange junctions.
-- **Platform Berth Allocator:** Dynamically computes conflict-free platform allocations to prevent outer-signal halts.
-- **Ministry ROI Calculator:** Interactive financial simulator forecasting annual diesel savings, passenger compensation reduction, and rolling-stock turnaround gains.
-
-### 6. 📱 Mobile-First PWA Experience
-- **Distance Gradient Coding:** Downstream stops color-coded for quick visual recognition (🟢 <50km imminent, 🟡 50-150km mid-section, 🔴 >150km far terminus).
-- **Auto-Hiding Quick Dock:** Sleek bottom navigation dock that auto-hides into a peek handle and smoothly reveals upon mouse proximity or hover.
-- **Dual Theme Support:** Seamless dark mode and high-contrast daylight theme switching.
+### 10. 🏆 Centered SIH Hackathon Jury Evaluation Mode
+- Elevated modal overlay presenting full algorithmic architecture, empirical benchmarks, production deployment blueprints, and evaluation scoring rubric for hackathon judges.
 
 ---
 
@@ -95,22 +120,25 @@ The primary champion model (**HistGradientBoostingRegressor**) was trained and c
 ```
 indian-railways-ai-eta/
 ├── frontend/                     # Modern UI / PWA Client Layer
-│   ├── index.html                # Passenger PWA markup & boarding pass card
-│   ├── app.js                    # Client-side reactivity, Leaflet GIS, XAI drawer logic
-│   ├── style.css                 # Responsive design tokens, popup overlays, animations
-│   ├── control_room.html         # Nexroute tactical dispatcher console layout
-│   └── control_room.js           # Radar controllers, Kavach telemetry, ROI model
+│   ├── assets/                   # Vector Brand Assets
+│   │   ├── logo.svg              # Official High-Res Aerodynamic Vector Logo
+│   │   └── favicon.svg           # High-Contrast Squircle Browser Favicon
+│   ├── index.html                # Passenger PWA markup, boarding pass, quick dock, footer
+│   ├── app.js                    # Client reactivity, Leaflet GIS, XAI drawer, dock UX, i18n
+│   ├── style.css                 # Responsive design tokens, decoupled mobile mode, theme variables
+│   ├── control_room.html         # Nexroute tactical dispatcher console layout & mobile tabs
+│   └── control_room.js           # Radar controllers, Kavach telemetry, interactive panels, ROI
 ├── backend/                      # High-Performance FastAPI Application
-│   ├── app.py                    # API router, CORS middleware, prediction endpoints
+│   ├── app.py                    # API router, CORS middleware, prediction & favicon endpoints
 │   ├── explainability.py         # Additive SHAP-style factor decomposition engine
 │   ├── self_learning.py          # Bayesian online continual section calibrator
 │   ├── alternate_journeys.py     # Connection rescue & corridor search algorithm
 │   ├── behavior_profile.py       # 90-day punctuality & chronic bottleneck profiler
-│   ├── staff_scheduler.py        # HOER crew duty compliance & platform berth heuristics
+│   ├── staff_scheduler.py        # HOER crew duty compliance & dynamic cleaning roster
 │   ├── roi_calculator.py         # Ministry financial savings simulation logic
 │   ├── realtime_feed.py          # NTES synthetic streaming telemetry provider
 │   ├── simulator.py              # Multi-factor operational disruption engine
-│   └── i18n.py                   # Multi-language localization (EN, HI, TA)
+│   └── i18n.py                   # 4-Language localization engine (EN, HI, TA, TE)
 ├── ml/                           # Machine Learning Pipeline
 │   ├── train.py                  # Training pipeline for HistGradientBoosting & baselines
 │   ├── predict.py                # Production ETAPredictor inference wrapper
@@ -120,8 +148,8 @@ indian-railways-ai-eta/
 │   ├── Indian_Railways_AI_ETA_Guidebook.pdf  # Full publication-quality PDF manual
 │   └── screenshots/              # High-resolution architectural screenshots
 ├── tests/                        # Automated Test Suites
-│   ├── test_api.py               # Endpoint & API contract validation tests
-│   └── test_innovations.py       # Unit tests for NTES, DNA, Rescue, & HOER modules
+│   ├── test_api.py               # Endpoint & API contract validation tests (100% PASS)
+│   └── test_innovations.py       # Unit tests for NTES, DNA, Rescue, & HOER (100% PASS)
 ├── requirements.txt              # Production Python dependencies
 ├── start_server.py               # Local server launch bootstrap
 └── push_to_github.bat            # Automated 1-click GitHub push script
@@ -176,11 +204,11 @@ Open your browser at:
 
 ### 5. Run Automated Test Suites
 ```bash
-# Run API test suite
-python -c "import tests.test_api as t; t.test_health(); t.test_search_trains(); t.test_get_route(); t.test_predict_eta(); print('ALL API TESTS PASSED!')"
+# Run core API test suite
+python tests/test_api.py
 
-# Run Innovation & ML test suite
-python -c "import tests.test_innovations as ti; ti.test_realtime_ntes_feed(); ti.test_behavior_profile(); ti.test_alternate_journeys(); ti.test_staff_scheduling_hoer(); print('ALL INNOVATION TESTS PASSED!')"
+# Run Innovation & Operational Staff test suite
+python tests/test_innovations.py
 ```
 
 ---
@@ -197,26 +225,35 @@ python -c "import tests.test_innovations as ti; ti.test_realtime_ntes_feed(); ti
 | `/api/alternates` | `GET` | Automatic Connection Rescue alternative train recommendations |
 | `/api/profile/{train_no}` | `GET` | 90-day train behavioral DNA punctuality profile |
 | `/api/staff_schedule` | `POST` | Intelligent loco pilot HOER duty and turnaround cleaning roster |
+| `/api/i18n/{lang}` | `GET` | Full localized dictionary for UI strings (EN, HI, TA, TE) |
+| `/favicon.ico` | `GET` | Serves official vector SVG favicon |
 
 ---
 
 ## 📄 Official PDF Operations Guidebook
 
-A complete, publication-grade technical manual and user operations guidebook has been generated and included directly in this repository:
+A complete, publication-grade technical manual and user operations guidebook is included directly in this repository:
 - **File:** [`docs/Indian_Railways_AI_ETA_Guidebook.pdf`](docs/Indian_Railways_AI_ETA_Guidebook.pdf)
 - **Contents:**
   - Executive Problem Statement & Mathematical Cross-Verification
   - Step-by-Step Passenger Web Application Walkthrough (with UI snips)
-  - Control Room Operations Manual (Radar, Kavach, HOER, ROI)
+  - Control Room Operations Manual (Radar, Kavach, HOER, Dynamic Cleaning Schedules)
   - SIH Hackathon Jury Evaluation Mode Guide
   - Exhaustive File-by-File Technical Decomposition & Dependency Matrix
 
 ---
 
-## 👥 Credits & Contact
+## 👥 The Retention Squad (Credits & Contact)
 
-- **Lead Developer & AI Architect:** Yuvan Siddharth (`yuvan`)
-- **Team Members:** Janhavi Sathish, Janani, A Kanishkar, Akshara Ashok, Aisvarya Lakshme Kannan
-- **Institution:** Smart India Hackathon Prototype Development Team
-- **Repository:** [https://github.com/ayuvan/indian-railways-ai-eta](https://github.com/ayuvan/indian-railways-ai-eta)
+This prototype was conceptualized, architected, and developed for the **Smart India Hackathon (SIH)** by **The Retention Squad**:
+
+- **Team Leader & AI Architect:** **Yuvan Siddharth** ([@ayuvan](https://github.com/ayuvan))
+- **Team Members:**
+  - **Janhavi Sathish**
+  - **Janani**
+  - **A Kanishkar**
+  - **Akshara Ashok**
+  - **Aisvarya Lakshme Kannan**
+- **Direct Contact:** [ayuvanashok@gmail.com](mailto:ayuvanashok@gmail.com)
+- **GitHub Repository:** [https://github.com/ayuvan/indian-railways-ai-eta](https://github.com/ayuvan/indian-railways-ai-eta)
 - **License:** Distributed under the MIT License. See `LICENSE` for more information.
