@@ -425,6 +425,13 @@ async def get_translations(lang: str = "en"):
 if os.path.exists(FRONTEND_DIR):
     app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
 
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    fav_path = os.path.join(FRONTEND_DIR, "assets", "favicon.svg")
+    if os.path.exists(fav_path):
+        return FileResponse(fav_path, media_type="image/svg+xml")
+    return FileResponse(os.path.join(FRONTEND_DIR, "assets", "logo.svg"), media_type="image/svg+xml")
+
 # --- DUAL PORTAL SERVING ---
 
 @app.get("/")

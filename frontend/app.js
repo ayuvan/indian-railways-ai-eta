@@ -304,6 +304,11 @@ function setupEventListeners() {
         e.preventDefault();
         document.querySelectorAll('.dock-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+
+        // Auto-collapse dock on mobile after tapping
+        const dock = document.getElementById('floating-mobile-dock');
+        if (dock) dock.classList.remove('dock-revealed');
+
         if (openMap && el.virtualMapDrawer) {
           el.virtualMapDrawer.classList.remove('hidden');
           state.isMapVisible = true;
@@ -1534,6 +1539,7 @@ function setupInnovationModalListeners() {
 function setupFloatingDockUX() {
   const dock = document.getElementById('floating-mobile-dock');
   const peekHandle = document.getElementById('dock-peek-handle');
+  const closeBtn = document.getElementById('dock-btn-close');
   if (!dock) return;
 
   // 1. Initial Page Load Entrance Hint:
@@ -1541,12 +1547,24 @@ function setupFloatingDockUX() {
   dock.classList.add('dock-entrance-anim');
   setTimeout(() => {
     dock.classList.remove('dock-entrance-anim');
-  }, 3200);
+  }, 2400);
 
-  // 2. Mouse approach detection:
-  // When cursor approaches within 85px of bottom of screen, smoothly slide dock into view
   let hideTimer = null;
+  let autoCloseTimer = null;
+
+  const resetAutoClose = () => {
+    if (autoCloseTimer) clearTimeout(autoCloseTimer);
+    if (window.innerWidth <= 768) {
+      autoCloseTimer = setTimeout(() => {
+        dock.classList.remove('dock-revealed');
+      }, 4500);
+    }
+  };
+
+  // 2. Mouse approach detection (Desktop mouse only):
+  // When cursor approaches within 85px of bottom of screen, smoothly slide dock into view
   window.addEventListener('mousemove', (e) => {
+    if (window.innerWidth <= 768) return; // Ignore on mobile
     const distFromBottom = window.innerHeight - e.clientY;
     if (distFromBottom <= 85) {
       if (hideTimer) {
@@ -1564,8 +1582,9 @@ function setupFloatingDockUX() {
     }
   });
 
-  // Keep revealed if mouse enters dock itself
+  // Keep revealed if mouse enters dock itself (Desktop)
   dock.addEventListener('mouseenter', () => {
+    if (window.innerWidth <= 768) return;
     if (hideTimer) {
       clearTimeout(hideTimer);
       hideTimer = null;
@@ -1577,7 +1596,40 @@ function setupFloatingDockUX() {
   if (peekHandle) {
     peekHandle.addEventListener('click', (e) => {
       e.stopPropagation();
-      dock.classList.toggle('dock-revealed');
+      const isRevealed = dock.classList.toggle('dock-revealed');
+      if (isRevealed) resetAutoClose();
     });
   }
+
+  // 4. Close button handler
+  if (closeBtn) {
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dock.classList.remove('dock-revealed');
+      if (autoCloseTimer) clearTimeout(autoCloseTimer);
+    });
+  }
+
+  // 5. Tap anywhere outside dock to hide back on mobile
+  document.addEventListener('click', (e) => {
+    if (!dock.contains(e.target)) {
+      dock.classList.remove('dock-revealed');
+      if (autoCloseTimer) clearTimeout(autoCloseTimer);
+    }
+  });
+
+  document.addEventListener('touchstart', (e) => {
+    if (!dock.contains(e.target)) {
+      dock.classList.remove('dock-revealed');
+      if (autoCloseTimer) clearTimeout(autoCloseTimer);
+    }
+  }, { passive: true });
+
+  // 6. When scrolling on mobile, collapse dock
+  window.addEventListener('scroll', () => {
+    if (window.innerWidth <= 768 && dock.classList.contains('dock-revealed')) {
+      dock.classList.remove('dock-revealed');
+      if (autoCloseTimer) clearTimeout(autoCloseTimer);
+    }
+  }, { passive: true });
 }

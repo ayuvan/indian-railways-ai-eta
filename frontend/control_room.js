@@ -580,6 +580,32 @@ function setupListeners() {
     sliderTrains.addEventListener('input', handleSliderChange);
     sliderDelay.addEventListener('input', handleSliderChange);
   }
+
+  // Mobile Mode Section Switcher (Fleet vs Radar vs Inspector)
+  const mobileTabs = document.querySelectorAll('.cr-m-tab');
+  const consoleLayout = document.querySelector('.nexroute-console-layout');
+  if (mobileTabs.length > 0 && consoleLayout) {
+    mobileTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        if (window.railAudio) window.railAudio.playTap();
+        mobileTabs.forEach(t => {
+          t.classList.remove('active');
+          const p = t.querySelector('.m-pill');
+          if (p) p.classList.remove('active');
+        });
+        tab.classList.add('active');
+        const pill = tab.querySelector('.m-pill');
+        if (pill) pill.classList.add('active');
+
+        const view = tab.getAttribute('data-mobile-view');
+        consoleLayout.setAttribute('data-mobile-active', view);
+
+        if (view === 'radar' && gisMap) {
+          setTimeout(() => gisMap.invalidateSize(), 200);
+        }
+      });
+    });
+  }
 }
 
 function applyTheme(theme) {
@@ -690,6 +716,12 @@ function renderFleetList(fleet) {
       crState.currentTrainNo = train.train_no;
       renderFleetList(crState.fleet);
       loadTrainRoute(train.train_no);
+
+      // On mobile devices, auto-switch to radar view tab to observe the selected train
+      if (window.innerWidth <= 1024) {
+        const radarTab = document.querySelector('.cr-m-tab[data-mobile-view="radar"]');
+        if (radarTab) radarTab.click();
+      }
     });
 
     crEl.fleetList.appendChild(div);

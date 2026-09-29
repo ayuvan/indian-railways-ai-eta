@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
+  <defs>
+    <linearGradient id="favBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1329"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="favOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+    <linearGradient id="favCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle Base -->
+  <rect x="4" y="4" width="120" height="120" rx="32" fill="url(#favBg)" stroke="url(#favOrange)" stroke-width="4"/>
+
+  <!-- Converging Perspective Rails -->
+  <path d="M 28 112 L 58 70" stroke="url(#favOrange)" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M 100 112 L 70 70" stroke="url(#favOrange)" stroke-width="4.5" stroke-linecap="round"/>
+  <line x1="38" y1="102" x2="90" y2="102" stroke="#475569" stroke-width="3" opacity="0.8"/>
+  <line x1="48" y1="88" x2="80" y2="88" stroke="#475569" stroke-width="2.5" opacity="0.8"/>
+
+  <!-- High-Speed Bullet Nose -->
+  <path d="M 64 16
+           C 74 26 88 52 88 74
+           C 88 88 78 94 64 94
+           C 50 94 40 88 40 74
+           C 40 52 54 26 64 16 Z"
+        fill="#f8fafc"
+        stroke="#ffffff"
+        stroke-width="2"/>
+
+  <!-- Windshield -->
+  <path d="M 64 32
+           C 70 42 78 56 78 64
+           C 78 68 70 70 64 70
+           C 58 70 50 68 50 64
+           C 50 56 58 42 64 32 Z"
+        fill="#090d16"
+        stroke="url(#favCyan)"
+        stroke-width="2"/>
+
+  <!-- Saffron Orange Front Accent -->
+  <path d="M 52 76 C 58 80 70 80 76 76 L 78 82 C 70 86 58 86 50 82 Z" fill="url(#favOrange)"/>
+
+  <!-- Glowing Headlights -->
+  <circle cx="54" cy="88" r="3.5" fill="#38bdf8"/>
+  <circle cx="74" cy="88" r="3.5" fill="#38bdf8"/>
+  <circle cx="64" cy="91" r="2.5" fill="#ea580c"/>
+</svg>

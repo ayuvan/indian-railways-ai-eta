@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1226"/>
+      <stop offset="50%" stop-color="#050a17"/>
+      <stop offset="100%" stop-color="#02040a"/>
+    </linearGradient>
+
+    <!-- Saffron Orange Railway Glow -->
+    <linearGradient id="saffronGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c"/>
+      <stop offset="50%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+
+    <!-- Electric Cyan AI Glow -->
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="50%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+
+    <!-- Metallic Silver / White Train Body -->
+    <linearGradient id="trainGrad" x1="0%" y1="0%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#f1f5f9"/>
+      <stop offset="80%" stop-color="#cbd5e1"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+
+    <!-- Shield Border Gradient -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="40%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+
+    <!-- Soft Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <!-- Intense Flare Filter -->
+    <filter id="flare" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="14" result="blur2"/>
+      <feComposite in="SourceGraphic" in2="blur2" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Base Rounded Shield Badge -->
+  <rect x="16" y="16" width="480" height="480" rx="100" fill="url(#bgGrad)" stroke="url(#borderGrad)" stroke-width="6"/>
+
+  <!-- Radar / AI Concentric Pulsing Waveform Rings -->
+  <g opacity="0.35" stroke="url(#cyanGrad)" stroke-width="2" fill="none">
+    <circle cx="256" cy="240" r="190" stroke-dasharray="8 8"/>
+    <circle cx="256" cy="240" r="140"/>
+    <circle cx="256" cy="240" r="90" stroke-dasharray="4 4"/>
+  </g>
+
+  <!-- Radiating Angle Sweeps (Radar Antenna) -->
+  <path d="M 256 50 L 256 430 M 70 240 L 442 240" stroke="url(#cyanGrad)" stroke-width="1.5" opacity="0.2"/>
+
+  <!-- Converging Perspective Railway Track Bed -->
+  <g>
+    <!-- Left Rail -->
+    <path d="M 120 440 L 235 270" stroke="url(#saffronGrad)" stroke-width="7" stroke-linecap="round"/>
+    <!-- Right Rail -->
+    <path d="M 392 440 L 277 270" stroke="url(#saffronGrad)" stroke-width="7" stroke-linecap="round"/>
+
+    <!-- Railway Sleepers / Ties (Perspective) -->
+    <line x1="145" y1="415" x2="367" y2="415" stroke="#475569" stroke-width="4.5" opacity="0.8"/>
+    <line x1="175" y1="380" x2="337" y2="380" stroke="#475569" stroke-width="4" opacity="0.7"/>
+    <line x1="200" y1="345" x2="312" y2="345" stroke="#475569" stroke-width="3.5" opacity="0.6"/>
+    <line x1="220" y1="315" x2="292" y2="315" stroke="#475569" stroke-width="3" opacity="0.5"/>
+    <line x1="235" y1="290" x2="277" y2="290" stroke="#475569" stroke-width="2.5" opacity="0.4"/>
+  </g>
+
+  <!-- Speed Shockwave Wings (Aerodynamic Speed Flow) -->
+  <g opacity="0.75" filter="url(#glow)">
+    <path d="M 150 240 Q 210 200 256 200" fill="none" stroke="url(#cyanGrad)" stroke-width="4"/>
+    <path d="M 362 240 Q 302 200 256 200" fill="none" stroke="url(#cyanGrad)" stroke-width="4"/>
+    <path d="M 110 270 Q 190 230 256 230" fill="none" stroke="url(#saffronGrad)" stroke-width="4.5"/>
+    <path d="M 402 270 Q 322 230 256 230" fill="none" stroke="url(#saffronGrad)" stroke-width="4.5"/>
+  </g>
+
+  <!-- Vande Bharat Aerodynamic High-Speed Bullet Locomotive Nose -->
+  <!-- Aerodynamic Silhouette Centerpiece -->
+  <path d="M 256 100
+           C 278 125 315 190 320 250
+           C 324 285 305 320 285 330
+           C 270 338 242 338 227 330
+           C 207 320 188 285 192 250
+           C 197 190 234 125 256 100 Z"
+        fill="url(#trainGrad)"
+        stroke="#ffffff"
+        stroke-width="3.5"
+        filter="url(#glow)"/>
+
+  <!-- Tinted High-Tech Cockpit Windshield (Gloss Visor) -->
+  <path d="M 256 142
+           C 272 160 295 195 295 215
+           C 295 224 275 228 256 228
+           C 237 228 217 224 217 215
+           C 217 195 240 160 256 142 Z"
+        fill="#090d16"
+        stroke="url(#cyanGrad)"
+        stroke-width="2.5"/>
+
+  <!-- Cockpit Glass Reflection Highlight -->
+  <path d="M 248 160 Q 256 150 264 160 Q 275 185 272 205 Q 262 210 256 210 Z"
+        fill="url(#cyanGrad)"
+        opacity="0.45"/>
+
+  <!-- Saffron Orange Signature Bullet Stripe -->
+  <path d="M 222 255
+           C 240 262 272 262 290 255
+           L 294 272
+           C 274 280 238 280 218 272 Z"
+        fill="url(#saffronGrad)"/>
+
+  <!-- Dual LED Projector Headlights -->
+  <circle cx="230" cy="298" r="9" fill="#38bdf8" filter="url(#flare)"/>
+  <circle cx="230" cy="298" r="4.5" fill="#ffffff"/>
+  <circle cx="282" cy="298" r="9" fill="#38bdf8" filter="url(#flare)"/>
+  <circle cx="282" cy="298" r="4.5" fill="#ffffff"/>
+
+  <!-- Central Laser AI Tracking Beacon -->
+  <circle cx="256" cy="316" r="6" fill="#f97316" filter="url(#flare)"/>
+  <circle cx="256" cy="316" r="2.5" fill="#ffffff"/>
+
+  <!-- Forward-Projecting Headlight Cones (High-Tech Beam) -->
+  <polygon points="230,305 130,440 220,440" fill="url(#cyanGrad)" opacity="0.25"/>
+  <polygon points="282,305 292,440 382,440" fill="url(#cyanGrad)" opacity="0.25"/>
+
+  <!-- Dynamic AI Pulse Stars / Constellation Nodes -->
+  <g fill="#38bdf8" filter="url(#glow)">
+    <circle cx="105" cy="150" r="4"/>
+    <circle cx="407" cy="150" r="4"/>
+    <circle cx="75" cy="280" r="3"/>
+    <circle cx="437" cy="280" r="3"/>
+  </g>
+
+  <!-- Bottom Brand Text Monogram Ribbon -->
+  <g transform="translate(0, 420)">
+    <rect x="156" y="22" width="200" height="34" rx="17" fill="#0f172a" stroke="url(#borderGrad)" stroke-width="2"/>
+    <text x="256" y="45" font-family="'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif" font-size="16" font-weight="900" fill="#f8fafc" text-anchor="middle" letter-spacing="2.5">
+      RAILYATRI <tspan fill="#f97316">AI</tspan>
+    </text>
+  </g>
+</svg>
